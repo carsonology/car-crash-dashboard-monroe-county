@@ -81,45 +81,6 @@ function Map(props) {
                 /*
                     ADD LAYERS + STYLING
                 */
-                // city council districts
-                // map.addLayer({
-                //     id: 'districts',
-                //     type: 'fill',
-                //     source: 'council-districts',
-                //     paint: {
-                //         'fill-color': districtColor,
-                //         'fill-opacity': ['case',
-                //             ['boolean', ['feature-state', 'hover'], false],
-                //             0.8,
-                //             0.5
-                //         ]
-                //     },
-                // }).addLayer({
-                //     // gray border on each district
-                //     'id': 'district-borders',
-                //     'type': 'line',
-                //     'source': 'council-districts',
-                //     'layout': {},
-                //     'paint': {
-                //         'line-color': borderColor,
-                //         'line-width': 2
-                //     }
-                // }).addLayer({
-                //     // label each district
-                //     'id': 'district-labels',
-                //     'type': 'symbol',
-                //     'source': 'council-districts',
-                //     'layout': {
-                //         'text-field': [
-                //             'format',
-                //             ['get', 'district_name'],
-                //             { 'font-scale': 0.6 }
-                //         ],
-                //     },
-                //     "paint": {
-                //         "text-color": labelColor
-                //     }
-                // })
 
                 // hexbins
                 map.addLayer({
@@ -134,7 +95,7 @@ function Map(props) {
                     'paint': {
                         'fill-color': hexColor,
                         'fill-opacity': [
-                            "interpolate", ["linear"], ["get", "density"],
+                            "interpolate", ["linear"], ["get", "a"],
                             // if there are zero points, max opacity = 0
                             0, 0,
                             // if the density = 1, max opacity = 80%
@@ -287,48 +248,6 @@ function Map(props) {
                 popup.setLngLat(coordinates).setHTML(popupHTML).addTo(map);
             })
 
-            // display the popup when a hexbin is hovered over
-            // map.on('mousemove', 'hexBins', (e) => {
-            //     // Change the cursor style as a UI indicator.
-            //     map.getCanvas().style.cursor = 'pointer';
-
-            //     // Get coordinates
-            //     const vertices = e.features[0].geometry.coordinates[0]
-            //     // average of top two vertices
-            //     const coordinates = [((vertices[1][0] + vertices[2][0]) / 2), vertices[4][1]]
-            //     const numCrashes = e.features[0].properties.numPoints
-            //     const data = JSON.parse(e.features[0].properties.data)
-
-            //     let totalDeaths = 0
-            //     let totalInjuries = 0
-            //     if (data.length > 0) {
-            //         totalDeaths = data.reduce(
-            //             (acc, current) => acc + (current.a ? current.a : 0), 0
-            //         )
-            //         totalInjuries = data.reduce(
-            //             (acc, current) => acc + (current.n ? current.n : 0), 0
-            //         )
-            //     }
-
-            //     let popupHTML = `
-            //                 <span style=margin-bottom:0;><strong>${numCrashes}</strong> crash${numCrashes > 1 ? `es` : ''}</span>
-            //                 <span><strong>${totalDeaths}</strong> death${totalDeaths !== 1 ? `s` : ''}</span>
-            //                 <span><strong>${totalInjuries}</strong> injur${totalInjuries !== 1 ? `ies` : 'y'}</span>
-            //             `
-
-            //     if (e.features[0].properties.numPoints > 0) {
-            //         // // Populate the popup and set its coordinates
-            //         // // based on the feature found.
-            //         popup.setLngLat(coordinates).setHTML(popupHTML).addTo(map);
-            //     } else if (e.features[0].properties.numPoints == 0) {
-            //         map.getCanvas().style.cursor = '';
-            //         popup.remove();
-            //     }
-            // }).on('mouseleave', 'hexBins', () => {
-            //     map.getCanvas().style.cursor = '';
-            //     popup.remove();
-            // })
-
             // hide the popup when the point is no longer hovered
             map.on('mouseleave', 'points', () => {
                 map.getCanvas().style.cursor = '';
@@ -337,24 +256,6 @@ function Map(props) {
 
             // hover effect => council districts
             let hoverId = null;
-
-            // map.on('mousemove', 'districts', (e) => {
-            //     console.log(e.features[0])
-
-            //     if (e.features.length > 0) {
-            //         if (hoveredStateId !== null) {
-            //             map.setFeatureState(
-            //                 { source: 'council-districts', id: hoveredStateId },
-            //                 { hover: false }
-            //             );
-            //         }
-            //         hoveredStateId = e.features[0].properties.district_id;
-            //         map.setFeatureState(
-            //             { source: 'council-districts', id: hoveredStateId },
-            //             { hover: true }
-            //         );
-            //     }
-            // })
 
             map.on('mousemove', 'hexBins', (e) => {
                 if (hoverId) {
@@ -383,105 +284,60 @@ function Map(props) {
 
     useEffect(() => {
         if (map) {
-            // console.log(hexVisibility)
-            // console.log(districtVisibility)
             map.setLayoutProperty('hexBins', 'visibility', hexVisibility ? 'visible' : 'none');
             map.setLayoutProperty('hex-borders', 'visibility', hexVisibility ? 'visible' : 'none');
 
-            // map.setLayoutProperty('districts', 'visibility', hexVisibility ? 'none' : 'visible');
-            // map.setLayoutProperty('district-labels', 'visibility', hexVisibility ? 'none' : 'visible');
-            // map.setLayoutProperty('district-borders', 'visibility', hexVisibility ? 'none' : 'visible');
-
-            // console.log('districts', map.style._layers.districts.visibility)
             console.log('hexbins', map.style._layers.hexBins.visibility)
         }
 
     }, [hexVisibility])
 
-    // useEffect(() => {
-    //     if (map) {
-    //         map.setLayoutProperty('districts', 'visibility', districtVisibility ? 'visible' : 'none');
-    //         map.setLayoutProperty('district-labels', 'visibility', districtVisibility ? 'visible' : 'none');
-    //         map.setLayoutProperty('district-borders', 'visibility', districtVisibility ? 'visible' : 'none');
-
-    //         map.setLayoutProperty('hexBins', 'visibility', districtVisibility ? 'none' : 'visible');
-    //         map.setLayoutProperty('hex-borders', 'visibility', districtVisibility ? 'none' : 'visible');
-    //     }
-    // }, [districtVisibility])
-
     useEffect(() => {
         // console.log(years)
         if (map) {
-            // let filter = ['in', "2021", ['get', "d"]]
-
-            let yearFilter = []
-
-            years.forEach((year) => {
-                yearFilter.push(['in', year.toString(), ['get', 'd']])
-            })
 
             let fullFilter = []
 
-            if (yearFilter) {
-                fullFilter = ['any', yearFilter]
+            if (showDeaths && showInjuries && showMinorCrashes) {
+                // show all colors
+                fullFilter = ['any', ['has', 'a'], ['!', ['has', 'a']]]
             }
-            // if (showDeaths) {
-            //     fullFilter = ['all', ['has', ['get', 'n']], ...fullFilter]
-            //     // console.log(fullFilter)
-            // }
+            if (showDeaths && !showInjuries && !showMinorCrashes) {
+                // show deahts only
+                fullFilter = ['has', 'a']
+            } else if (showInjuries && !showDeaths && !showMinorCrashes) {
+                // show injuries only
+                fullFilter = ['has', 'n']
+            } else if (showMinorCrashes && !showDeaths && !showInjuries) {
+                // show crashes with no injuries or deaths only
+                fullFilter = ['all', ["!", ["has", "a"]], ["!", ["has", "n"]]]
+            } else if (!showDeaths && showInjuries && showMinorCrashes) {
+                // hide deaths only
+                fullFilter = ['!', ['has', 'a']]
+            } else if (!showInjuries && showDeaths && showMinorCrashes) {
+                // hide injuries only
+                fullFilter = ['!', ['has', 'n']]
+            } else if (!showMinorCrashes && showInjuries && showDeaths) {
+                // hide minor crashes only
+                fullFilter = ['any', ["has", "a"], ["has", "n"]]
+            } else if (!showDeaths && !showInjuries && !showMinorCrashes) {
+                // hide all
+                fullFilter = ['all', ["has", "a"], ["!", ["has", "a"]]]
+            }
 
-            // all deaths from 2019 and 2020
-            // fullFilter = ["all", ["has", "a"], ['any', ["in", "2019", ["get", "d"]], ["in", "2020", ["get", "d"]]]]
-            // fullFilter = ["!", ["has", "a"]]
-            // all crashes from 2019 and 2020
-            // fullFilter = ['any', ["in", "2019", ["get", "d"]], ["in", "2020", ["get", "d"]]]
-            // for some reason this doesn't work
-            fullFilter = ["all",
-                ["all", ["!", ["has", "n"]], ["!", ["has", "a"]]],
-                ['any', ["in", "2019", ["get", "d"]], ["in", "2020", ["get", "d"]], ["in", "2022", ["get", "d"]]]]
-            // fullFilter = ['all', ["has", ["get", "n"]], ['any', ["in", "2013", ["get", "d"]], ["in", "2020", ["get", "d"]], ["in", "2022", ["get", "d"]]]]
+            // add year filtering on top of color filtering
+            let yearFilter = []
+            // for each year in filter, add this array to the filter array
+            years.forEach((year) => {
+                yearFilter.push(['in', year.toString(), ['get', 'd']])
+            })
+            if (yearFilter.length < 20) {
+                fullFilter = ['all', fullFilter, ['any', ...yearFilter]]
+            }
 
             map.setFilter('points', fullFilter)
-            console.log(map.style._layers.points.filter)
         }
-    }, [years, showDeaths])
-
-    // useEffect(() => {
-    //     if (map) {
-    //         let filter1 = showDeaths ? ["has", "n"] : null
-    //         let filter2 = showInjuries ? ["has", "a"] : null
-    //         let filter3 = showMinorCrashes ? ['all', ["!has", "a"], ["!has", "n"]] : null
-
-    //         let yearFilter = []
-
-    //         years.forEach((year) => {
-    //             yearFilter.push(['in', year.toString(), ['get', 'd']])
-    //         })
-
-    //         console.log(years)
-
-    //         let fullFilter = []
-    //         if (filter1) {
-    //             fullFilter.push(filter1)
-    //         }
-    //         if (filter2) {
-    //             fullFilter.push(filter2)
-    //         }
-    //         if (filter3) {
-    //             fullFilter.push(filter3)
-    //         }
-    //         if (yearFilter) {
-    //             // fullFilter.push(['any', yearFilter])
-    //             fullFilter = ['all', ...fullFilter, ['any', ...yearFilter]]
-    //         }
-
-    //         console.log(fullFilter)
-
-    //         map.setFilter('points', ['any', ...fullFilter])
-
-    //         console.log(map.style._layers.points.filter)
-    //     }
-    // }, [showDeaths, showInjuries, showMinorCrashes, years])
+    }, [years, showDeaths, showInjuries, showMinorCrashes])
 
 
     return (
