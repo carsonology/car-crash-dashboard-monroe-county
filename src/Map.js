@@ -174,10 +174,10 @@ function Map(props) {
                         // adjust circle radius based on zoom level
                         'circle-radius': ['interpolate', ['linear'], ['zoom'],
                             // at zoom level 10 => 1 px
-                            10, 1,
+                            10, .75,
                             // at zoom level 12 => 1.5 px
-                            12, 1.5,
-                            14, 3,
+                            12, 1,
+                            14, 2,
                             // at zoom level 20 => 20 px
                             20, 20
                         ],
