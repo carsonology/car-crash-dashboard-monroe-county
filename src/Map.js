@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import mapboxgl from 'mapbox-gl';
-import districts from './data/city-council-districts.geojson'
+// import districts from './data/city-council-districts.geojson'
 import "mapbox-gl/dist/mapbox-gl.css";
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
@@ -9,11 +9,12 @@ function Map(props) {
     const {
         data,
         hexVisibility,
-        districtVisibility,
+        // districtVisibility,
         hexGridData,
         showDeaths,
         showInjuries,
-        showMinorCrashes
+        showMinorCrashes,
+        years
     } = props
 
     // console.log(hexGridData)
@@ -21,11 +22,11 @@ function Map(props) {
     const [map, setMap] = useState(null);
     const mapContainer = useRef(null);
 
-    const districtColor = "rgba(255,255,255,0.2)"
+    // const districtColor = "rgba(255,255,255,0.2)"
     const hexColor = "rgb(119, 216, 240)"
     const pointColor = "yellow"
-    const pointColorDeath = "red"
-    const pointColorInjury = "orange"
+    const pointColorDeath = "orange"
+    const pointColorInjury = "red"
     const borderColor = "rgb(53, 53, 53)"
     // const borderColor = "rgb(168, 152, 152)"
     const labelColor = "rgb(120,120,120)"
@@ -67,10 +68,10 @@ function Map(props) {
                     'data': data
                 })
                 // city council district areas 
-                map.addSource('council-districts', {
-                    'type': 'geojson',
-                    'data': districts
-                })
+                // map.addSource('council-districts', {
+                //     'type': 'geojson',
+                //     'data': districts
+                // })
                 // hexbins geojson (generated in MapContext)
                 map.addSource('hexbin-data', {
                     'type': 'geojson',
@@ -81,44 +82,44 @@ function Map(props) {
                     ADD LAYERS + STYLING
                 */
                 // city council districts
-                map.addLayer({
-                    id: 'districts',
-                    type: 'fill',
-                    source: 'council-districts',
-                    paint: {
-                        'fill-color': districtColor,
-                        'fill-opacity': ['case',
-                            ['boolean', ['feature-state', 'hover'], false],
-                            0.8,
-                            0.5
-                        ]
-                    },
-                }).addLayer({
-                    // gray border on each district
-                    'id': 'district-borders',
-                    'type': 'line',
-                    'source': 'council-districts',
-                    'layout': {},
-                    'paint': {
-                        'line-color': borderColor,
-                        'line-width': 2
-                    }
-                }).addLayer({
-                    // label each district
-                    'id': 'district-labels',
-                    'type': 'symbol',
-                    'source': 'council-districts',
-                    'layout': {
-                        'text-field': [
-                            'format',
-                            ['get', 'district_name'],
-                            { 'font-scale': 0.6 }
-                        ],
-                    },
-                    "paint": {
-                        "text-color": labelColor
-                    }
-                })
+                // map.addLayer({
+                //     id: 'districts',
+                //     type: 'fill',
+                //     source: 'council-districts',
+                //     paint: {
+                //         'fill-color': districtColor,
+                //         'fill-opacity': ['case',
+                //             ['boolean', ['feature-state', 'hover'], false],
+                //             0.8,
+                //             0.5
+                //         ]
+                //     },
+                // }).addLayer({
+                //     // gray border on each district
+                //     'id': 'district-borders',
+                //     'type': 'line',
+                //     'source': 'council-districts',
+                //     'layout': {},
+                //     'paint': {
+                //         'line-color': borderColor,
+                //         'line-width': 2
+                //     }
+                // }).addLayer({
+                //     // label each district
+                //     'id': 'district-labels',
+                //     'type': 'symbol',
+                //     'source': 'council-districts',
+                //     'layout': {
+                //         'text-field': [
+                //             'format',
+                //             ['get', 'district_name'],
+                //             { 'font-scale': 0.6 }
+                //         ],
+                //     },
+                //     "paint": {
+                //         "text-color": labelColor
+                //     }
+                // })
 
                 // hexbins
                 map.addLayer({
@@ -166,26 +167,53 @@ function Map(props) {
                     source: 'crash-data-source',
                     paint: {
                         'circle-color': ["case",
-                            ['has', 'n'],
-                            pointColorDeath,
-                            ["has", "a"],
+                            ['has', 'a'],
                             pointColorInjury,
+                            ["has", "n"],
+                            pointColorDeath,
                             pointColor],
                         // adjust circle radius based on zoom level
                         'circle-radius': ['interpolate', ['linear'], ['zoom'],
-                            // at zoom level 10 => 1 px
-                            10, .75,
+                            10, [
+                                'case',
+                                ['boolean', ['has', 'a'], false],
+                                2,
+                                1
+                            ],
                             // at zoom level 12 => 1.5 px
-                            12, 1,
-                            14, 2,
+                            12, [
+                                'case',
+                                ['boolean', ['has', 'a'], false],
+                                3,
+                                1.5
+                            ],
+                            14, [
+                                'case',
+                                ['boolean', ['has', 'a'], false],
+                                6,
+                                3
+                            ],
                             // at zoom level 20 => 20 px
-                            20, 20
+                            20, [
+                                'case',
+                                ['boolean', ['has', 'a'], false],
+                                40,
+                                20
+                            ]
+
+                            // // at zoom level 10 => 1 px
+                            // 10, .75,
+                            // // at zoom level 12 => 1.5 px
+                            // 12, 1,
+                            // 14, 2,
+                            // // at zoom level 20 => 20 px
+                            // 20, 20
                         ],
                         // no stroke
                         'circle-stroke-width': 0,
                         'circle-opacity': [
                             'case',
-                            ['boolean', ['has', 'n'], false],
+                            ['boolean', ['has', 'n'], true],
                             .8,
                             ['boolean', ['has', 'n'], false],
                             1,
@@ -230,8 +258,8 @@ function Map(props) {
                 const coordinates = e.features[0].geometry.coordinates.slice()
                 const primaryFactor = e.features[0].properties.p
                 const date = e.features[0].properties.d
-                const deaths = e.features[0].properties.n
-                const injuries = e.features[0].properties.a
+                const deaths = e.features[0].properties.a
+                const injuries = e.features[0].properties.n
                 const road1 = e.features[0].properties.r
                 const road2 = e.features[0].properties.i
 
@@ -260,46 +288,46 @@ function Map(props) {
             })
 
             // display the popup when a hexbin is hovered over
-            map.on('mousemove', 'hexBins', (e) => {
-                // Change the cursor style as a UI indicator.
-                map.getCanvas().style.cursor = 'pointer';
+            // map.on('mousemove', 'hexBins', (e) => {
+            //     // Change the cursor style as a UI indicator.
+            //     map.getCanvas().style.cursor = 'pointer';
 
-                // Get coordinates
-                const vertices = e.features[0].geometry.coordinates[0]
-                // average of top two vertices
-                const coordinates = [((vertices[1][0] + vertices[2][0]) / 2), vertices[4][1]]
-                const numCrashes = e.features[0].properties.numPoints
-                const data = JSON.parse(e.features[0].properties.data)
+            //     // Get coordinates
+            //     const vertices = e.features[0].geometry.coordinates[0]
+            //     // average of top two vertices
+            //     const coordinates = [((vertices[1][0] + vertices[2][0]) / 2), vertices[4][1]]
+            //     const numCrashes = e.features[0].properties.numPoints
+            //     const data = JSON.parse(e.features[0].properties.data)
 
-                let totalDeaths = 0
-                let totalInjuries = 0
-                if (data.length > 0) {
-                    totalDeaths = data.reduce(
-                        (acc, current) => acc + (current.n ? current.n : 0), 0
-                    )
-                    totalInjuries = data.reduce(
-                        (acc, current) => acc + (current.a ? current.a : 0), 0
-                    )
-                }
+            //     let totalDeaths = 0
+            //     let totalInjuries = 0
+            //     if (data.length > 0) {
+            //         totalDeaths = data.reduce(
+            //             (acc, current) => acc + (current.a ? current.a : 0), 0
+            //         )
+            //         totalInjuries = data.reduce(
+            //             (acc, current) => acc + (current.n ? current.n : 0), 0
+            //         )
+            //     }
 
-                let popupHTML = `
-                            <span style=margin-bottom:0;><strong>${numCrashes}</strong> crash${numCrashes > 1 ? `es` : ''}</span>
-                            <span><strong>${totalDeaths}</strong> death${totalDeaths !== 1 ? `s` : ''}</span>
-                            <span><strong>${totalInjuries}</strong> injur${totalInjuries !== 1 ? `ies` : 'y'}</span>
-                        `
+            //     let popupHTML = `
+            //                 <span style=margin-bottom:0;><strong>${numCrashes}</strong> crash${numCrashes > 1 ? `es` : ''}</span>
+            //                 <span><strong>${totalDeaths}</strong> death${totalDeaths !== 1 ? `s` : ''}</span>
+            //                 <span><strong>${totalInjuries}</strong> injur${totalInjuries !== 1 ? `ies` : 'y'}</span>
+            //             `
 
-                if (e.features[0].properties.numPoints > 0) {
-                    // // Populate the popup and set its coordinates
-                    // // based on the feature found.
-                    popup.setLngLat(coordinates).setHTML(popupHTML).addTo(map);
-                } else if (e.features[0].properties.numPoints == 0) {
-                    map.getCanvas().style.cursor = '';
-                    popup.remove();
-                }
-            }).on('mouseleave', 'hexBins', () => {
-                map.getCanvas().style.cursor = '';
-                popup.remove();
-            })
+            //     if (e.features[0].properties.numPoints > 0) {
+            //         // // Populate the popup and set its coordinates
+            //         // // based on the feature found.
+            //         popup.setLngLat(coordinates).setHTML(popupHTML).addTo(map);
+            //     } else if (e.features[0].properties.numPoints == 0) {
+            //         map.getCanvas().style.cursor = '';
+            //         popup.remove();
+            //     }
+            // }).on('mouseleave', 'hexBins', () => {
+            //     map.getCanvas().style.cursor = '';
+            //     popup.remove();
+            // })
 
             // hide the popup when the point is no longer hovered
             map.on('mouseleave', 'points', () => {
@@ -360,49 +388,100 @@ function Map(props) {
             map.setLayoutProperty('hexBins', 'visibility', hexVisibility ? 'visible' : 'none');
             map.setLayoutProperty('hex-borders', 'visibility', hexVisibility ? 'visible' : 'none');
 
-            map.setLayoutProperty('districts', 'visibility', hexVisibility ? 'none' : 'visible');
-            map.setLayoutProperty('district-labels', 'visibility', hexVisibility ? 'none' : 'visible');
-            map.setLayoutProperty('district-borders', 'visibility', hexVisibility ? 'none' : 'visible');
+            // map.setLayoutProperty('districts', 'visibility', hexVisibility ? 'none' : 'visible');
+            // map.setLayoutProperty('district-labels', 'visibility', hexVisibility ? 'none' : 'visible');
+            // map.setLayoutProperty('district-borders', 'visibility', hexVisibility ? 'none' : 'visible');
 
-            console.log('districts', map.style._layers.districts.visibility)
+            // console.log('districts', map.style._layers.districts.visibility)
             console.log('hexbins', map.style._layers.hexBins.visibility)
         }
 
     }, [hexVisibility])
 
-    useEffect(() => {
-        if (map) {
-            map.setLayoutProperty('districts', 'visibility', districtVisibility ? 'visible' : 'none');
-            map.setLayoutProperty('district-labels', 'visibility', districtVisibility ? 'visible' : 'none');
-            map.setLayoutProperty('district-borders', 'visibility', districtVisibility ? 'visible' : 'none');
+    // useEffect(() => {
+    //     if (map) {
+    //         map.setLayoutProperty('districts', 'visibility', districtVisibility ? 'visible' : 'none');
+    //         map.setLayoutProperty('district-labels', 'visibility', districtVisibility ? 'visible' : 'none');
+    //         map.setLayoutProperty('district-borders', 'visibility', districtVisibility ? 'visible' : 'none');
 
-            map.setLayoutProperty('hexBins', 'visibility', districtVisibility ? 'none' : 'visible');
-            map.setLayoutProperty('hex-borders', 'visibility', districtVisibility ? 'none' : 'visible');
-        }
-    }, [districtVisibility])
+    //         map.setLayoutProperty('hexBins', 'visibility', districtVisibility ? 'none' : 'visible');
+    //         map.setLayoutProperty('hex-borders', 'visibility', districtVisibility ? 'none' : 'visible');
+    //     }
+    // }, [districtVisibility])
 
     useEffect(() => {
+        // console.log(years)
         if (map) {
-            let filter1 = showDeaths ? ["has", "n"] : null
-            let filter2 = showInjuries ? ["has", "a"] : null
-            let filter3 = showMinorCrashes ? ['all', ["!has", "a"], ["!has", "n"]] : null
+            // let filter = ['in', "2021", ['get', "d"]]
+
+            let yearFilter = []
+
+            years.forEach((year) => {
+                yearFilter.push(['in', year.toString(), ['get', 'd']])
+            })
 
             let fullFilter = []
-            if (filter1) {
-                fullFilter.push(filter1)
-            }
-            if (filter2) {
-                fullFilter.push(filter2)
-            }
-            if (filter3) {
-                fullFilter.push(filter3)
-            }
 
-            map.setFilter('points', ['any', ...fullFilter])
+            if (yearFilter) {
+                fullFilter = ['any', yearFilter]
+            }
+            // if (showDeaths) {
+            //     fullFilter = ['all', ['has', ['get', 'n']], ...fullFilter]
+            //     // console.log(fullFilter)
+            // }
 
-            console.log(map.style._layers.points)
+            // all deaths from 2019 and 2020
+            // fullFilter = ["all", ["has", "a"], ['any', ["in", "2019", ["get", "d"]], ["in", "2020", ["get", "d"]]]]
+            // fullFilter = ["!", ["has", "a"]]
+            // all crashes from 2019 and 2020
+            // fullFilter = ['any', ["in", "2019", ["get", "d"]], ["in", "2020", ["get", "d"]]]
+            // for some reason this doesn't work
+            fullFilter = ["all",
+                ["all", ["!", ["has", "n"]], ["!", ["has", "a"]]],
+                ['any', ["in", "2019", ["get", "d"]], ["in", "2020", ["get", "d"]], ["in", "2022", ["get", "d"]]]]
+            // fullFilter = ['all', ["has", ["get", "n"]], ['any', ["in", "2013", ["get", "d"]], ["in", "2020", ["get", "d"]], ["in", "2022", ["get", "d"]]]]
+
+            map.setFilter('points', fullFilter)
+            console.log(map.style._layers.points.filter)
         }
-    }, [showDeaths, showInjuries, showMinorCrashes])
+    }, [years, showDeaths])
+
+    // useEffect(() => {
+    //     if (map) {
+    //         let filter1 = showDeaths ? ["has", "n"] : null
+    //         let filter2 = showInjuries ? ["has", "a"] : null
+    //         let filter3 = showMinorCrashes ? ['all', ["!has", "a"], ["!has", "n"]] : null
+
+    //         let yearFilter = []
+
+    //         years.forEach((year) => {
+    //             yearFilter.push(['in', year.toString(), ['get', 'd']])
+    //         })
+
+    //         console.log(years)
+
+    //         let fullFilter = []
+    //         if (filter1) {
+    //             fullFilter.push(filter1)
+    //         }
+    //         if (filter2) {
+    //             fullFilter.push(filter2)
+    //         }
+    //         if (filter3) {
+    //             fullFilter.push(filter3)
+    //         }
+    //         if (yearFilter) {
+    //             // fullFilter.push(['any', yearFilter])
+    //             fullFilter = ['all', ...fullFilter, ['any', ...yearFilter]]
+    //         }
+
+    //         console.log(fullFilter)
+
+    //         map.setFilter('points', ['any', ...fullFilter])
+
+    //         console.log(map.style._layers.points.filter)
+    //     }
+    // }, [showDeaths, showInjuries, showMinorCrashes, years])
 
 
     return (

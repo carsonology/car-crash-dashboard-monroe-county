@@ -6,21 +6,24 @@ function Controls(props) {
     const {
         hexVisibility,
         setHexVisibility,
-        districtVisibility,
-        setDistrictVisibility,
+        // districtVisibility,
+        // setDistrictVisibility,
         showDeaths,
         setShowDeaths,
         showInjuries,
         setShowInjuries,
         showMinorCrashes,
-        setShowMinorCrashes
+        setShowMinorCrashes,
+        years,
+        setYears
     } = props
     return (
         <div className="Controls" style={{
             // height: '100%',
             display: 'flex',
             justifyContent: 'space-between',
-            flexFlow: 'column nowrap'
+            flexFlow: 'column nowrap',
+            overflow: 'scroll'
         }}>
             <div>
                 <svg className="logo" viewBox="0 0 163.17 68.85">
@@ -98,22 +101,29 @@ function Controls(props) {
                         setFlag={setShowMinorCrashes}
                         color={'yellow'}
                     />
+                    <ControlButton
+                        type="year-filter"
+                        textOn="Year"
+                        textOff="Year"
+                        flag={years}
+                        setFlag={setYears}
+                    />
                 </div>
-                <ControlButton
+                {/* <ControlButton
                     type="toggle"
                     textOn="City council districts shown"
                     textOff="City council districts hidden"
                     flag={districtVisibility}
                     setFlag={setDistrictVisibility}
                     setSecondaryFlag={setHexVisibility}
-                />
+                /> */}
                 <ControlButton
                     type="toggle"
                     textOn="Hexbins shown"
                     textOff="Hexbins hidden"
                     flag={hexVisibility}
                     setFlag={setHexVisibility}
-                    setSecondaryFlag={setDistrictVisibility}
+                // setSecondaryFlag={setDistrictVisibility}
                 />
 
                 <h2>Style</h2>

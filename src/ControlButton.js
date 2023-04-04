@@ -4,6 +4,7 @@ import Switch from "react-switch"
 import ReactSlider from 'react-slider'
 // import 'react-input-checkbox/lib/react-input-checkbox.min.css';
 import { Checkbox } from 'react-input-checkbox';
+import Select from 'react-select'
 
 function ControlButton(props) {
 
@@ -94,6 +95,23 @@ function ControlButton(props) {
                         </div>
                     </label>
                 </div>
+            )
+        case "year-filter":
+            const years = [2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022]
+            const options = years.map((year) => {
+                return { value: year, label: year }
+            })
+            return (
+                <Select
+                    className="multi-select-years"
+                    options={options}
+                    defaultValue={options}
+                    isMulti={true}
+                    onChange={(e) => {
+                        setFlag(e.map((f) => f.value))
+                        // console.log(flag)
+                    }}
+                />
             )
     }
 }
