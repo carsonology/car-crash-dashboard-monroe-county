@@ -9,26 +9,23 @@ function Map(props) {
     const {
         data,
         hexVisibility,
-        // districtVisibility,
-        hexGridData,
+        hexGridDataLarge,
+        hexGridDataMedium,
+        hexGridDataSmall,
         showDeaths,
         showInjuries,
         showMinorCrashes,
         years
     } = props
 
-    // console.log(hexGridData)
-
     const [map, setMap] = useState(null);
     const mapContainer = useRef(null);
 
-    // const districtColor = "rgba(255,255,255,0.2)"
     const hexColor = "rgb(119, 216, 240)"
     const pointColor = "yellow"
     const pointColorDeath = "orange"
     const pointColorInjury = "red"
     const borderColor = "rgb(53, 53, 53)"
-    // const borderColor = "rgb(168, 152, 152)"
     const labelColor = "rgb(120,120,120)"
 
     useEffect(() => {
@@ -67,15 +64,20 @@ function Map(props) {
                     'type': 'geojson',
                     'data': data
                 })
-                // city council district areas 
-                // map.addSource('council-districts', {
-                //     'type': 'geojson',
-                //     'data': districts
-                // })
                 // hexbins geojson (generated in MapContext)
-                map.addSource('hexbin-data', {
+                map.addSource('hexbin-data-large', {
                     'type': 'geojson',
-                    'data': hexGridData
+                    'data': hexGridDataLarge
+                })
+                // hexbins geojson (generated in MapContext)
+                map.addSource('hexbin-data-medium', {
+                    'type': 'geojson',
+                    'data': hexGridDataMedium
+                })
+                // hexbins geojson (generated in MapContext)
+                map.addSource('hexbin-data-small', {
+                    'type': 'geojson',
+                    'data': hexGridDataSmall
                 })
 
                 /*
@@ -84,9 +86,11 @@ function Map(props) {
 
                 // hexbins
                 map.addLayer({
-                    id: 'hexBins',
+                    id: 'hex-large',
                     type: 'fill',
-                    source: 'hexbin-data',
+                    source: 'hexbin-data-large',
+                    maxzoom: 14,
+                    minzoom: 10,
                     // set visibility as visible initially
                     // then it can be toggled later 
                     'layout': {
@@ -101,12 +105,97 @@ function Map(props) {
                             // if the density = 1, max opacity = 80%
                             1, .8
                         ]
-                    }
+                    },
                 }).addLayer({
                     // light border on each hexbin
-                    'id': 'hex-borders',
+                    'id': 'hex-borders-large',
                     'type': 'line',
-                    'source': 'hexbin-data',
+                    maxzoom: 14,
+                    minzoom: 10,
+                    'source': 'hexbin-data-large',
+                    'layout': {},
+                    'paint': {
+                        'line-color': borderColor,
+                        // 'line-width': ['match', ['get', 'density'], 0, 0, 1]
+                        'line-width': [
+                            'case',
+                            ['boolean', ['feature-state', 'hover'], false],
+                            ['match', ['get', 'density'], 0, 0, 4],
+                            ['match', ['get', 'density'], 0, 0, 1]
+                        ]
+
+                    }
+                })
+
+                map.addLayer({
+                    id: 'hex-medium',
+                    type: 'fill',
+                    source: 'hexbin-data-medium',
+                    minzoom: 14,
+                    maxzoom: 15,
+                    // set visibility as visible initially
+                    // then it can be toggled later 
+                    'layout': {
+                        'visibility': 'visible'
+                    },
+                    'paint': {
+                        'fill-color': hexColor,
+                        'fill-opacity': [
+                            "interpolate", ["linear"], ["get", "a"],
+                            // if there are zero points, max opacity = 0
+                            0, 0,
+                            // if the density = 1, max opacity = 80%
+                            1, .8
+                        ]
+                    },
+                }).addLayer({
+                    // light border on each hexbin
+                    'id': 'hex-borders-medium',
+                    'type': 'line',
+                    minzoom: 14,
+                    maxzoom: 15,
+                    'source': 'hexbin-data-medium',
+                    'layout': {},
+                    'paint': {
+                        'line-color': borderColor,
+                        // 'line-width': ['match', ['get', 'density'], 0, 0, 1]
+                        'line-width': [
+                            'case',
+                            ['boolean', ['feature-state', 'hover'], false],
+                            ['match', ['get', 'density'], 0, 0, 4],
+                            ['match', ['get', 'density'], 0, 0, 1]
+                        ]
+
+                    }
+                })
+
+                map.addLayer({
+                    id: 'hex-small',
+                    type: 'fill',
+                    source: 'hexbin-data-small',
+                    minzoom: 15,
+                    // maxzoom: 16,
+                    // set visibility as visible initially
+                    // then it can be toggled later 
+                    'layout': {
+                        'visibility': 'visible'
+                    },
+                    'paint': {
+                        'fill-color': hexColor,
+                        'fill-opacity': [
+                            "interpolate", ["linear"], ["get", "a"],
+                            // if there are zero points, max opacity = 0
+                            0, 0,
+                            // if the density = 1, max opacity = 80%
+                            1, .8
+                        ]
+                    },
+                }).addLayer({
+                    // light border on each hexbin
+                    'id': 'hex-borders-small',
+                    'type': 'line',
+                    minzoom: 15,
+                    'source': 'hexbin-data-small',
                     'layout': {},
                     'paint': {
                         'line-color': borderColor,
@@ -194,7 +283,7 @@ function Map(props) {
 
         if (!map) initializeMap({ setMap, mapContainer });
 
-    }, [data, hexGridData]);
+    }, [data, hexGridDataLarge]);
 
 
     /*
@@ -231,8 +320,6 @@ function Map(props) {
                     coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
                 }
 
-                console.log(e.features[0].properties)
-
                 let popupHTML = `
                             <p style=margin-bottom:0;><strong>${new Date(date).toLocaleDateString('en-us', { hour: "numeric", year: "numeric", month: "short", day: "numeric" })}</strong></p>
                             <p style=margin-bottom:0;><strong>Primary factor:</strong> ${primaryFactor ? primaryFactor.charAt(0).toUpperCase() + primaryFactor.slice(1).toLowerCase() : 'Not listed'}</p>
@@ -257,10 +344,10 @@ function Map(props) {
             // hover effect => council districts
             let hoverId = null;
 
-            map.on('mousemove', 'hexBins', (e) => {
+            map.on('mousemove', 'hex-large', (e) => {
                 if (hoverId) {
                     map.removeFeatureState({
-                        source: 'hexbin-data',
+                        source: 'hexbin-data-large',
                         id: hoverId
                     })
                 }
@@ -269,7 +356,49 @@ function Map(props) {
 
                 map.setFeatureState(
                     {
-                        source: 'hexbin-data',
+                        source: 'hexbin-data-large',
+                        id: hoverId
+                    },
+                    {
+                        hover: true
+                    }
+                )
+
+            })
+            map.on('mousemove', 'hex-medium', (e) => {
+                if (hoverId) {
+                    map.removeFeatureState({
+                        source: 'hexbin-data-medium',
+                        id: hoverId
+                    })
+                }
+
+                hoverId = e.features[0].id
+
+                map.setFeatureState(
+                    {
+                        source: 'hexbin-data-medium',
+                        id: hoverId
+                    },
+                    {
+                        hover: true
+                    }
+                )
+
+            })
+            map.on('mousemove', 'hex-small', (e) => {
+                if (hoverId) {
+                    map.removeFeatureState({
+                        source: 'hexbin-data-small',
+                        id: hoverId
+                    })
+                }
+
+                hoverId = e.features[0].id
+
+                map.setFeatureState(
+                    {
+                        source: 'hexbin-data-small',
                         id: hoverId
                     },
                     {
@@ -284,25 +413,23 @@ function Map(props) {
 
     useEffect(() => {
         if (map) {
-            map.setLayoutProperty('hexBins', 'visibility', hexVisibility ? 'visible' : 'none');
-            map.setLayoutProperty('hex-borders', 'visibility', hexVisibility ? 'visible' : 'none');
+            map.setLayoutProperty('hex-large', 'visibility', hexVisibility ? 'visible' : 'none');
+            map.setLayoutProperty('hex-borders-large', 'visibility', hexVisibility ? 'visible' : 'none');
 
-            console.log('hexbins', map.style._layers.hexBins.visibility)
+            // console.log('hexbins', map.style._layers.hexBins.visibility)
         }
 
     }, [hexVisibility])
 
     useEffect(() => {
-        // console.log(years)
         if (map) {
-
             let fullFilter = []
 
             if (showDeaths && showInjuries && showMinorCrashes) {
                 // show all colors
                 fullFilter = ['any', ['has', 'a'], ['!', ['has', 'a']]]
             }
-            if (showDeaths && !showInjuries && !showMinorCrashes) {
+            else if (showDeaths && !showInjuries && !showMinorCrashes) {
                 // show deahts only
                 fullFilter = ['has', 'a']
             } else if (showInjuries && !showDeaths && !showMinorCrashes) {
