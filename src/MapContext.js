@@ -2,29 +2,26 @@ import React, { useState, useEffect } from "react"
 import './App.css'
 import Map from './Map.js'
 // import geojson from 'https://raw.githubusercontent.com/carsonology/crash-data/main/master_crash_clean.min.geojson?token=GHSAT0AAAAAACASYJVWBVYK2IHSMY7KBEJ6ZBLJOSA'
-// import geojson from './data/master_crash_clean.min.geojson'
+import geojson from './data/master_crash_clean.min.geojson'
 // import geojson from './data/master_crash_clean.sample.min.geojson'
 import mapboxgl from 'mapbox-gl';
-import hexagon_data from './data/hexagon-data.geojson'
+import hexagon_data from './data/hexagon-data-large.min.geojson'
 import * as turf from '@turf/turf'
 
-// import fs from '@turf/file-system'
-
-// var fs =require('@turf/file-system')
-// fs.save('example.geojson', featureCollection)
 
 function MapContext(props) {
     const {
         hexVisibility,
-        districtVisibility,
+        // districtVisibility,
         showDeaths,
         showInjuries,
-        showMinorCrashes
+        showMinorCrashes,
+        years
     } = props
 
     mapboxgl.accessToken = 'pk.eyJ1IjoiY3RlcmJ1c2giLCJhIjoiY2t0dnZrYjM4MmU0aDJvbzM1dTFqbDY1NiJ9.zdZur9mZOlVhIxAoiqVwBA'
 
-    const geojson = 'https://raw.githubusercontent.com/carsonology/crash-data/main/master_crash_clean.min.geojson'
+    // const geojson = 'https://raw.githubusercontent.com/carsonology/crash-data/main/master_crash_clean.min.geojson'
     // const geojson = 'https://raw.githubusercontent.com/carsonology/crash-data/main/master_crash_clean.sample.min.geojson?token=GHSAT0AAAAAACASYJVWHAPSSNAAYY6IYKTGZBLJP6A'
     const [data, setData] = useState(geojson)
     const [hexGridData, setHexGridData] = useState(hexagon_data)
@@ -39,7 +36,7 @@ function MapContext(props) {
     */
     // useEffect(() => {
     //     const bbox = [-86.70764843085207, 38.980672784175255, -86.33708588689486, 39.54695628365925]
-    //     const cellSide = .5;
+    //     const cellSide = .2;
     //     const options = {};
     //     const hexagons = turf.hexGrid(bbox, cellSide, options);
 
@@ -50,6 +47,8 @@ function MapContext(props) {
     //         hex.properties.numPoints = internalData.length
     //         return hex
     //     })
+
+    //     hexagons.features.filter((hex) => hex.numPoints > 0)
 
     //     const binWMostPoints = hexagons.features.reduce(
     //         (prev, current) => {
@@ -90,11 +89,12 @@ function MapContext(props) {
             <Map
                 data={data}
                 hexVisibility={hexVisibility}
-                districtVisibility={districtVisibility}
+                // districtVisibility={districtVisibility}
                 hexGridData={hexGridData}
                 showDeaths={showDeaths}
                 showInjuries={showInjuries}
                 showMinorCrashes={showMinorCrashes}
+                years={years}
             />
             {/* button used to download geojson after turf completes calculations based on above code */}
             {/* <a style={{
