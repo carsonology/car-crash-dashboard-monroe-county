@@ -23,8 +23,8 @@ function Map(props) {
 
     const hexColor = "rgb(119, 216, 240)"
     const pointColor = "yellow"
-    const pointColorDeath = "orange"
-    const pointColorInjury = "red"
+    const pointColorDeath = "red"
+    const pointColorInjury = "orange"
     const borderColor = "rgb(53, 53, 53)"
     const labelColor = "rgb(120,120,120)"
 
@@ -38,12 +38,14 @@ function Map(props) {
                 // it will know where to put the map based on the mapContainer ref
                 container: mapContainer.current,
                 // style: "mapbox://styles/mapbox/dark-v10",
-                style: "mapbox://styles/cterbush/clfyfv364003s01o4xuofdpp3",
+                // style: "mapbox://styles/cterbush/clfyfv364003s01o4xuofdpp3",
+                style: 'mapbox://styles/cterbush/clfyfv364003s01o4xuofdpp3',
                 // center it over Bloomington
                 center: [-86.52702437238956, 39.1656613635316],
                 zoom: 12,
                 // prevent from zooming out too far
-                minZoom: 10
+                minZoom: 10,
+                worldCopyJump: true
             }).addControl(
                 // add geocoder to enable search
                 new MapboxGeocoder({
@@ -61,8 +63,10 @@ function Map(props) {
                 */
                 // crash data points 
                 map.addSource('crash-data-source', {
-                    'type': 'geojson',
-                    'data': data
+                    // 'type': 'geojson',
+                    // 'data': data
+                    'type': 'vector',
+                    url: 'mapbox://cterbush.asrfcark'
                 })
                 // hexbins geojson (generated in MapContext)
                 map.addSource('hexbin-data-large', {
@@ -76,104 +80,22 @@ function Map(props) {
                 })
                 // hexbins geojson (generated in MapContext)
                 map.addSource('hexbin-data-small', {
-                    'type': 'geojson',
-                    'data': hexGridDataSmall
+                    'type': 'vector',
+                    // 'data': 'https://studio.mapbox.com/tilesets/cterbush.3c2zgy5z'
+                    url: 'mapbox://cterbush.3c2zgy5z',
                 })
+
 
                 /*
                     ADD LAYERS + STYLING
                 */
 
-                // hexbins
-                map.addLayer({
-                    id: 'hex-large',
-                    type: 'fill',
-                    source: 'hexbin-data-large',
-                    maxzoom: 14,
-                    minzoom: 10,
-                    // set visibility as visible initially
-                    // then it can be toggled later 
-                    'layout': {
-                        'visibility': 'visible'
-                    },
-                    'paint': {
-                        'fill-color': hexColor,
-                        'fill-opacity': [
-                            "interpolate", ["linear"], ["get", "a"],
-                            // if there are zero points, max opacity = 0
-                            0, 0,
-                            // if the density = 1, max opacity = 80%
-                            1, .8
-                        ]
-                    },
-                }).addLayer({
-                    // light border on each hexbin
-                    'id': 'hex-borders-large',
-                    'type': 'line',
-                    maxzoom: 14,
-                    minzoom: 10,
-                    'source': 'hexbin-data-large',
-                    'layout': {},
-                    'paint': {
-                        'line-color': borderColor,
-                        // 'line-width': ['match', ['get', 'density'], 0, 0, 1]
-                        'line-width': [
-                            'case',
-                            ['boolean', ['feature-state', 'hover'], false],
-                            ['match', ['get', 'density'], 0, 0, 4],
-                            ['match', ['get', 'density'], 0, 0, 1]
-                        ]
-
-                    }
-                })
-
-                map.addLayer({
-                    id: 'hex-medium',
-                    type: 'fill',
-                    source: 'hexbin-data-medium',
-                    minzoom: 14,
-                    maxzoom: 15,
-                    // set visibility as visible initially
-                    // then it can be toggled later 
-                    'layout': {
-                        'visibility': 'visible'
-                    },
-                    'paint': {
-                        'fill-color': hexColor,
-                        'fill-opacity': [
-                            "interpolate", ["linear"], ["get", "a"],
-                            // if there are zero points, max opacity = 0
-                            0, 0,
-                            // if the density = 1, max opacity = 80%
-                            1, .8
-                        ]
-                    },
-                }).addLayer({
-                    // light border on each hexbin
-                    'id': 'hex-borders-medium',
-                    'type': 'line',
-                    minzoom: 14,
-                    maxzoom: 15,
-                    'source': 'hexbin-data-medium',
-                    'layout': {},
-                    'paint': {
-                        'line-color': borderColor,
-                        // 'line-width': ['match', ['get', 'density'], 0, 0, 1]
-                        'line-width': [
-                            'case',
-                            ['boolean', ['feature-state', 'hover'], false],
-                            ['match', ['get', 'density'], 0, 0, 4],
-                            ['match', ['get', 'density'], 0, 0, 1]
-                        ]
-
-                    }
-                })
-
                 map.addLayer({
                     id: 'hex-small',
                     type: 'fill',
                     source: 'hexbin-data-small',
-                    minzoom: 15,
+                    'source-layer': 'hexagon-data-small-21dqvs',
+                    // minzoom: 15,
                     // maxzoom: 16,
                     // set visibility as visible initially
                     // then it can be toggled later 
@@ -183,6 +105,7 @@ function Map(props) {
                     'paint': {
                         'fill-color': hexColor,
                         'fill-opacity': [
+                            // maybe use stops instead
                             "interpolate", ["linear"], ["get", "a"],
                             // if there are zero points, max opacity = 0
                             0, 0,
@@ -196,6 +119,7 @@ function Map(props) {
                     'type': 'line',
                     minzoom: 15,
                     'source': 'hexbin-data-small',
+                    'source-layer': 'hexagon-data-small-21dqvs',
                     'layout': {},
                     'paint': {
                         'line-color': borderColor,
@@ -210,70 +134,65 @@ function Map(props) {
                     }
                 })
 
-                // individual crash data points
+                const point_radius = ['interpolate', ['linear'], ['zoom'],
+                    // at zoom level 10 => 1 px
+                    10, 1,
+                    // at zoom level 12 => 1.5 px
+                    12, 1.5,
+                    14, 3,
+                    // at zoom level 20 => 20 px
+                    20, 20
+                ]
                 map.addLayer({
-                    id: 'points',
+                    id: 'points-injuries',
                     type: 'circle',
                     source: 'crash-data-source',
+                    'source-layer': 'master_injuriesmin',
+                    layout: {
+                        visibility: 'visible',
+                    },
                     paint: {
-                        'circle-color': ["case",
-                            ['has', 'a'],
-                            pointColorInjury,
-                            ["has", "n"],
-                            pointColorDeath,
-                            pointColor],
-                        // adjust circle radius based on zoom level
-                        'circle-radius': ['interpolate', ['linear'], ['zoom'],
-                            10, [
-                                'case',
-                                ['boolean', ['has', 'a'], false],
-                                2,
-                                1
-                            ],
-                            // at zoom level 12 => 1.5 px
-                            12, [
-                                'case',
-                                ['boolean', ['has', 'a'], false],
-                                3,
-                                1.5
-                            ],
-                            14, [
-                                'case',
-                                ['boolean', ['has', 'a'], false],
-                                6,
-                                3
-                            ],
-                            // at zoom level 20 => 20 px
-                            20, [
-                                'case',
-                                ['boolean', ['has', 'a'], false],
-                                40,
-                                20
-                            ]
-
-                            // // at zoom level 10 => 1 px
-                            // 10, .75,
-                            // // at zoom level 12 => 1.5 px
-                            // 12, 1,
-                            // 14, 2,
-                            // // at zoom level 20 => 20 px
-                            // 20, 20
-                        ],
+                        'circle-color': pointColorInjury,
+                        'circle-radius': point_radius,
                         // no stroke
                         'circle-stroke-width': 0,
-                        'circle-opacity': [
-                            'case',
-                            ['boolean', ['has', 'n'], true],
-                            .8,
-                            ['boolean', ['has', 'n'], false],
-                            1,
-                            .3
-                        ],
-                        // filter: ['has', 'n']
+                        'circle-opacity': .8
                     },
-                    cluster: true,
-                    clusterMaxZoom: 14, // Max zoom to cluster points on
-                    clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
+                })
+
+                map.addLayer({
+                    id: 'points-minor',
+                    type: 'circle',
+                    source: 'crash-data-source',
+                    'source-layer': 'master_minormin',
+                    layout: {
+                        visibility: 'visible',
+                    },
+                    paint: {
+                        'circle-color': pointColor,
+                        'circle-radius': point_radius,
+                        // no stroke
+                        'circle-stroke-width': 0,
+                        'circle-opacity': .3
+                    },
+                })
+
+                // individual crash data points
+                map.addLayer({
+                    id: 'points-death',
+                    type: 'circle',
+                    source: 'crash-data-source',
+                    'source-layer': 'master_deathsmin',
+                    layout: {
+                        visibility: 'visible',
+                    },
+                    paint: {
+                        'circle-color': pointColorDeath,
+                        'circle-radius': point_radius,
+                        // no stroke
+                        'circle-stroke-width': 0,
+                        'circle-opacity': 1
+                    },
                 })
 
 
@@ -299,97 +218,74 @@ function Map(props) {
                 className: 'popup'
             })
 
-            // display the popup when a point is hovered over
-            map.on('mouseenter', 'points', (e) => {
-                // Change the cursor style as a UI indicator.
-                map.getCanvas().style.cursor = 'pointer';
+            const popupFunction = (e, layer_name) => {
+                {
+                    // Change the cursor style as a UI indicator.
+                    map.getCanvas().style.cursor = 'pointer';
 
-                // Copy coordinates array.
-                const coordinates = e.features[0].geometry.coordinates.slice()
-                const primaryFactor = e.features[0].properties.p
-                const date = e.features[0].properties.d
-                const deaths = e.features[0].properties.a
-                const injuries = e.features[0].properties.n
-                const road1 = e.features[0].properties.r
-                const road2 = e.features[0].properties.i
+                    // Copy coordinates array.
+                    const coordinates = e.features[0].geometry.coordinates.slice()
+                    const primaryFactor = e.features[0].properties.p
+                    const date = e.features[0].properties.d
+                    let deaths = 0
+                    let injuries = 0
+                    if (layer_name == 'points-minor') {
+                        deaths = e.features[0].properties.n
+                        injuries = 0
+                    } else {
+                        deaths = e.features[0].properties.a
+                        injuries = e.features[0].properties.n
+                    }
+                    const mannerOfCollision = e.features[0].properties.m
 
-                // Ensure that if the map is zoomed out such that multiple
-                // copies of the feature are visible, the popup appears
-                // over the copy being pointed to.
-                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                    // Ensure that if the map is zoomed out such that multiple
+                    // copies of the feature are visible, the popup appears
+                    // over the copy being pointed to.
+                    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                    }
+
+                    let popupHTML = `
+                                <p style=margin-bottom:0;><strong>${new Date(date).toLocaleDateString('en-us', { hour: "numeric", year: "numeric", month: "short", day: "numeric" })}</strong></p>
+                                <p style=margin-bottom:0;><strong>Primary factor:</strong> ${primaryFactor ? primaryFactor.charAt(0).toUpperCase() + primaryFactor.slice(1).toLowerCase() : 'Not listed'}</p>
+                                <p style=margin-bottom:0;><strong>Type of collision:</strong> ${mannerOfCollision ? mannerOfCollision.charAt(0).toUpperCase() + mannerOfCollision.slice(1).toLowerCase() : 'Not listed'}</p>
+                                <div style="display: flex; justify-content: space-between;">
+                                <p style=margin-bottom:0;><strong>Deaths:</strong> ${deaths ? deaths : '0'}</p>
+                                <p style=margin-bottom:0;><strong>Injuries:</strong> ${injuries ? injuries : '0'}</p>
+                                </div>
+                            `
+                    // <p style=margin-bottom:0;><strong>${road1}${road2 ? ' and ' + road2.charAt(0).toUpperCase() + road2.slice(1).toLowerCase() : ''}</strong></p>
+
+                    // Populate the popup and set its coordinates
+                    // based on the feature found.
+                    popup.setLngLat(coordinates).setHTML(popupHTML).addTo(map);
                 }
+            }
 
-                let popupHTML = `
-                            <p style=margin-bottom:0;><strong>${new Date(date).toLocaleDateString('en-us', { hour: "numeric", year: "numeric", month: "short", day: "numeric" })}</strong></p>
-                            <p style=margin-bottom:0;><strong>Primary factor:</strong> ${primaryFactor ? primaryFactor.charAt(0).toUpperCase() + primaryFactor.slice(1).toLowerCase() : 'Not listed'}</p>
-                            <div style="display: flex; justify-content: space-between;">
-                            <p style=margin-bottom:0;><strong>Deaths:</strong> ${deaths ? deaths : '0'}</p>
-                            <p style=margin-bottom:0;><strong>Injuries:</strong> ${injuries ? injuries : '0'}</p>
-                            </div>
-                        `
-                // <p style=margin-bottom:0;><strong>${road1}${road2 ? ' and ' + road2.charAt(0).toUpperCase() + road2.slice(1).toLowerCase() : ''}</strong></p>
+            // display the popup when a point is hovered over
+            map.on('mouseenter', 'points-death', (e) => popupFunction(e, 'points-death'))
+            map.on('mouseenter', 'points-injuries', (e) => popupFunction(e, 'points-injuries'))
+            map.on('mouseenter', 'points-minor', (e) => popupFunction(e, 'points-minor'))
 
-                // Populate the popup and set its coordinates
-                // based on the feature found.
-                popup.setLngLat(coordinates).setHTML(popupHTML).addTo(map);
-            })
-
-            // hide the popup when the point is no longer hovered
-            map.on('mouseleave', 'points', () => {
+            const popupRemove = () => {
                 map.getCanvas().style.cursor = '';
                 popup.remove();
-            })
+            }
+
+            // hide the popup when the point is no longer hovered
+            map.on('mouseleave', 'points-death', popupRemove)
+            map.on('mouseleave', 'points-injuries', popupRemove)
+            map.on('mouseleave', 'points-minor', popupRemove)
 
             // hover effect => council districts
             let hoverId = null;
 
-            map.on('mousemove', 'hex-large', (e) => {
-                if (hoverId) {
-                    map.removeFeatureState({
-                        source: 'hexbin-data-large',
-                        id: hoverId
-                    })
-                }
-
-                hoverId = e.features[0].id
-
-                map.setFeatureState(
-                    {
-                        source: 'hexbin-data-large',
-                        id: hoverId
-                    },
-                    {
-                        hover: true
-                    }
-                )
-
-            })
-            map.on('mousemove', 'hex-medium', (e) => {
-                if (hoverId) {
-                    map.removeFeatureState({
-                        source: 'hexbin-data-medium',
-                        id: hoverId
-                    })
-                }
-
-                hoverId = e.features[0].id
-
-                map.setFeatureState(
-                    {
-                        source: 'hexbin-data-medium',
-                        id: hoverId
-                    },
-                    {
-                        hover: true
-                    }
-                )
-
-            })
+            // })
             map.on('mousemove', 'hex-small', (e) => {
                 if (hoverId) {
                     map.removeFeatureState({
                         source: 'hexbin-data-small',
+                        sourceLayer: 'hexagon-data-small-21dqvs',
                         id: hoverId
                     })
                 }
@@ -399,6 +295,7 @@ function Map(props) {
                 map.setFeatureState(
                     {
                         source: 'hexbin-data-small',
+                        sourceLayer: 'hexagon-data-small-21dqvs',
                         id: hoverId
                     },
                     {
@@ -413,8 +310,8 @@ function Map(props) {
 
     useEffect(() => {
         if (map) {
-            map.setLayoutProperty('hex-large', 'visibility', hexVisibility ? 'visible' : 'none');
-            map.setLayoutProperty('hex-borders-large', 'visibility', hexVisibility ? 'visible' : 'none');
+            map.setLayoutProperty('hex-small', 'visibility', hexVisibility ? 'visible' : 'none');
+            map.setLayoutProperty('hex-borders-small', 'visibility', hexVisibility ? 'visible' : 'none');
 
             // console.log('hexbins', map.style._layers.hexBins.visibility)
         }
@@ -423,48 +320,42 @@ function Map(props) {
 
     useEffect(() => {
         if (map) {
-            let fullFilter = []
-
-            if (showDeaths && showInjuries && showMinorCrashes) {
-                // show all colors
-                fullFilter = ['any', ['has', 'a'], ['!', ['has', 'a']]]
-            }
-            else if (showDeaths && !showInjuries && !showMinorCrashes) {
-                // show deahts only
-                fullFilter = ['has', 'a']
-            } else if (showInjuries && !showDeaths && !showMinorCrashes) {
-                // show injuries only
-                fullFilter = ['has', 'n']
-            } else if (showMinorCrashes && !showDeaths && !showInjuries) {
-                // show crashes with no injuries or deaths only
-                fullFilter = ['all', ["!", ["has", "a"]], ["!", ["has", "n"]]]
-            } else if (!showDeaths && showInjuries && showMinorCrashes) {
-                // hide deaths only
-                fullFilter = ['!', ['has', 'a']]
-            } else if (!showInjuries && showDeaths && showMinorCrashes) {
-                // hide injuries only
-                fullFilter = ['!', ['has', 'n']]
-            } else if (!showMinorCrashes && showInjuries && showDeaths) {
-                // hide minor crashes only
-                fullFilter = ['any', ["has", "a"], ["has", "n"]]
-            } else if (!showDeaths && !showInjuries && !showMinorCrashes) {
-                // hide all
-                fullFilter = ['all', ["has", "a"], ["!", ["has", "a"]]]
-            }
-
             // add year filtering on top of color filtering
             let yearFilter = []
             // for each year in filter, add this array to the filter array
             years.forEach((year) => {
                 yearFilter.push(['in', year.toString(), ['get', 'd']])
             })
-            if (yearFilter.length < 20) {
-                fullFilter = ['all', fullFilter, ['any', ...yearFilter]]
-            }
 
-            map.setFilter('points', fullFilter)
+            if (yearFilter.length > 0) {
+                map.setFilter('points-death', ['any', ...yearFilter])
+                map.setFilter('points-injuries', ['any', ...yearFilter])
+                map.setFilter('points-minor', ['any', ...yearFilter])
+            } else {
+                map.setFilter('points-death', null)
+                map.setFilter('points-injuries', null)
+                map.setFilter('points-minor', null)
+            }
         }
-    }, [years, showDeaths, showInjuries, showMinorCrashes])
+    }, [years])
+
+    useEffect(() => {
+        if (map) {
+            map.setLayoutProperty('points-death', 'visibility', showDeaths ? 'visible' : 'none')
+        }
+    }, [showDeaths])
+
+    useEffect(() => {
+        if (map) {
+            map.setLayoutProperty('points-minor', 'visibility', showMinorCrashes ? 'visible' : 'none');
+        }
+    }, [showMinorCrashes])
+
+    useEffect(() => {
+        if (map) {
+            map.setLayoutProperty('points-injuries', 'visibility', showInjuries ? 'visible' : 'none');
+        }
+    }, [showInjuries])
 
 
     return (
