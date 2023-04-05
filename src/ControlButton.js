@@ -1,10 +1,11 @@
-import React, { useState, Fragment } from "react"
+import React, { useState, useEffect, Fragment } from "react"
 import './App.css'
 import Switch from "react-switch"
 import ReactSlider from 'react-slider'
 // import 'react-input-checkbox/lib/react-input-checkbox.min.css';
 import { Checkbox } from 'react-input-checkbox';
 import Select from 'react-select'
+import MultiRangeSlider from "multi-range-slider-react";
 
 function ControlButton(props) {
 
@@ -12,8 +13,10 @@ function ControlButton(props) {
 
     const [text, setText] = useState(textOn)
 
-    const onChange = () => {
+    const [minYear, setMinYear] = useState(null)
+    const [maxYear, setMaxYear] = useState(null)
 
+    const onChange = () => {
         if (type == "toggle" || type == "checkbox") {
             setFlag(!flag)
             if (setSecondaryFlag) {
@@ -26,7 +29,16 @@ function ControlButton(props) {
         }
     }
 
-    // const [checked, setChecked] = useState(flag)
+
+    useEffect(() => {
+        if (minYear) {
+            const arrLength = maxYear - minYear + 1
+            let nums = [...Array(arrLength).keys()]
+
+            nums = nums.map((num) => num + minYear)
+            setFlag(nums)
+        }
+    }, [minYear, maxYear])
 
     switch (type) {
         case "toggle":
@@ -97,23 +109,28 @@ function ControlButton(props) {
                 </div>
             )
         case "year-filter":
-            const years = [2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022]
-            const options = years.map((year) => {
-                return { value: year, label: year }
-            })
+
             return (
-                <Select
-                    className="multi-select-years"
-                    options={options}
-                    defaultValue={options}
-                    isMulti={true}
-                    onChange={(e) => {
-                        setFlag(e.map((f) => f.value))
-                        // console.log(flag)
-                    }}
-                />
+                <label>
+                    <span>Years</span>
+                    <MultiRangeSlider
+                        className={'year-slider'}
+                        min={2003}
+                        max={2022}
+                        step={1}
+                        minValue={2003}
+                        maxValue={2022}
+                        onInput={(e) => {
+                            setMinYear(e.minValue)
+                            setMaxYear(e.maxValue)
+                        }}
+                        ruler='false'
+                    />
+                </label>
             )
     }
 }
 
 export default ControlButton;
+
+
