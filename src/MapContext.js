@@ -71,42 +71,42 @@ function MapContext(props) {
 
     // comment this out when using the above Turf functionality to generate
     // the hex data
-    useEffect(() => {
-        // fetch(hexGridDataLarge)
-        //     .then(response => {
-        //         return response.json();
-        //     })
-        //     .then(data => setHexGridDataLarge(data));
-        // fetch(hexGridDataMedium)
-        //     .then(response => {
-        //         return response.json();
-        //     })
-        //     .then(data => setHexGridDataMedium(data));
-        fetch(hexGridDataSmall)
-            .then(response => {
-                return response.json();
-            })
-            .then(data => setHexGridDataSmall(data));
-    }, [])
+    // useEffect(() => {
+    //     // fetch(hexGridDataLarge)
+    //     //     .then(response => {
+    //     //         return response.json();
+    //     //     })
+    //     //     .then(data => setHexGridDataLarge(data));
+    //     // fetch(hexGridDataMedium)
+    //     //     .then(response => {
+    //     //         return response.json();
+    //     //     })
+    //     //     .then(data => setHexGridDataMedium(data));
+    //     fetch(hexGridDataSmall)
+    //         .then(response => {
+    //             return response.json();
+    //         })
+    //         .then(data => setHexGridDataSmall(data));
+    // }, [])
 
-    useEffect(() => {
-        fetch(data)
-            .then(response => {
-                return response.json();
-            })
-            .then(data => setData(data));
+    // useEffect(() => {
+    //     fetch(data)
+    //         .then(response => {
+    //             return response.json();
+    //         })
+    //         .then(data => setData(data));
 
-    }, [])
+    // }, [])
 
     return (
         <>
             <Map
-                data={data}
+                // data={data}
                 hexVisibility={hexVisibility}
                 // districtVisibility={districtVisibility}
                 // hexGridDataLarge={hexGridDataLarge}
                 // hexGridDataMedium={hexGridDataMedium}
-                hexGridDataSmall={hexGridDataSmall}
+                // hexGridDataSmall={hexGridDataSmall}
                 showDeaths={showDeaths}
                 showInjuries={showInjuries}
                 showMinorCrashes={showMinorCrashes}

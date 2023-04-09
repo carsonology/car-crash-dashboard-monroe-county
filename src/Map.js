@@ -7,7 +7,7 @@ import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 
 function Map(props) {
     const {
-        data,
+        // data,
         hexVisibility,
         // hexGridDataLarge,
         // hexGridDataMedium,
@@ -217,7 +217,7 @@ function Map(props) {
 
         if (!map) initializeMap({ setMap, mapContainer });
 
-    }, [data]);
+    }, []);
 
 
     /*
