@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/crash-dashboard/static/css/main.b4148344.css",
+    "main.js": "/crash-dashboard/static/js/main.72acb2d9.js",
+    "static/js/787.e8d00e08.chunk.js": "/crash-dashboard/static/js/787.e8d00e08.chunk.js",
+    "index.html": "/crash-dashboard/index.html",
+    "main.b4148344.css.map": "/crash-dashboard/static/css/main.b4148344.css.map",
+    "main.72acb2d9.js.map": "/crash-dashboard/static/js/main.72acb2d9.js.map",
+    "787.e8d00e08.chunk.js.map": "/crash-dashboard/static/js/787.e8d00e08.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.b4148344.css",
+    "static/js/main.72acb2d9.js"
+  ]
+}
