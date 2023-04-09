@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react"
 import './App.css'
 import Map from './Map.js'
 // import geojson from 'https://raw.githubusercontent.com/carsonology/crash-data/main/master_crash_clean.min.geojson?token=GHSAT0AAAAAACASYJVWBVYK2IHSMY7KBEJ6ZBLJOSA'
-import geojson from './data/master_crash_clean.min.geojson'
+// import geojson from './data/master_crash_clean.min.geojson'
 // import geojson from './data/master_crash_clean.sample.min.geojson'
 import mapboxgl from 'mapbox-gl';
-import hexagon_data_large from './data/hexagon-data-large.min.geojson'
-import hexagon_data_medium from './data/hexagon-data-medium.min.geojson'
-import hexagon_data_small from './data/hexagon-data-small.min.geojson'
+// import hexagon_data_large from './data/hexagon-data-large.min.geojson'
+// import hexagon_data_medium from './data/hexagon-data-medium.min.geojson'
+// import hexagon_data_small from './data/hexagon-data-small.min.geojson'
 import * as turf from '@turf/turf'
 
 
@@ -25,10 +25,10 @@ function MapContext(props) {
 
     // const geojson = 'https://raw.githubusercontent.com/carsonology/crash-data/main/master_crash_clean.min.geojson'
     // const geojson = 'https://raw.githubusercontent.com/carsonology/crash-data/main/master_crash_clean.sample.min.geojson?token=GHSAT0AAAAAACASYJVWHAPSSNAAYY6IYKTGZBLJP6A'
-    const [data, setData] = useState(geojson)
-    const [hexGridDataLarge, setHexGridDataLarge] = useState(hexagon_data_large)
-    const [hexGridDataMedium, setHexGridDataMedium] = useState(hexagon_data_medium)
-    const [hexGridDataSmall, setHexGridDataSmall] = useState(hexagon_data_small)
+    const [data, setData] = useState(null)
+    // const [hexGridDataLarge, setHexGridDataLarge] = useState(hexagon_data_large)
+    // const [hexGridDataMedium, setHexGridDataMedium] = useState(hexagon_data_medium)
+    const [hexGridDataSmall, setHexGridDataSmall] = useState(null)
 
 
     /*
@@ -72,16 +72,16 @@ function MapContext(props) {
     // comment this out when using the above Turf functionality to generate
     // the hex data
     useEffect(() => {
-        fetch(hexGridDataLarge)
-            .then(response => {
-                return response.json();
-            })
-            .then(data => setHexGridDataLarge(data));
-        fetch(hexGridDataMedium)
-            .then(response => {
-                return response.json();
-            })
-            .then(data => setHexGridDataMedium(data));
+        // fetch(hexGridDataLarge)
+        //     .then(response => {
+        //         return response.json();
+        //     })
+        //     .then(data => setHexGridDataLarge(data));
+        // fetch(hexGridDataMedium)
+        //     .then(response => {
+        //         return response.json();
+        //     })
+        //     .then(data => setHexGridDataMedium(data));
         fetch(hexGridDataSmall)
             .then(response => {
                 return response.json();
@@ -104,8 +104,8 @@ function MapContext(props) {
                 data={data}
                 hexVisibility={hexVisibility}
                 // districtVisibility={districtVisibility}
-                hexGridDataLarge={hexGridDataLarge}
-                hexGridDataMedium={hexGridDataMedium}
+                // hexGridDataLarge={hexGridDataLarge}
+                // hexGridDataMedium={hexGridDataMedium}
                 hexGridDataSmall={hexGridDataSmall}
                 showDeaths={showDeaths}
                 showInjuries={showInjuries}
