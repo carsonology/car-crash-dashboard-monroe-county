@@ -4,7 +4,7 @@ import Switch from "react-switch"
 import ReactSlider from 'react-slider'
 // import 'react-input-checkbox/lib/react-input-checkbox.min.css';
 import { Checkbox } from 'react-input-checkbox';
-import Select from 'react-select'
+// import Select from 'react-select'
 import MultiRangeSlider from "multi-range-slider-react";
 
 function ControlButton(props) {
