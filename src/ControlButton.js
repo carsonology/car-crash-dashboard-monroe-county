@@ -2,14 +2,12 @@ import React, { useState, useEffect, Fragment } from "react"
 import './App.css'
 import Switch from "react-switch"
 import ReactSlider from 'react-slider'
-// import 'react-input-checkbox/lib/react-input-checkbox.min.css';
 import { Checkbox } from 'react-input-checkbox';
-// import Select from 'react-select'
 import MultiRangeSlider from "multi-range-slider-react";
 
 function ControlButton(props) {
 
-    const { type, textOn, textOff, flag, setFlag, flagSecondary, smallLabels, setSecondaryFlag, color } = props
+    const { type, textOn, textOff, flag, setFlag, flagSecondary, smallLabels, setSecondaryFlag } = props
 
     const [text, setText] = useState(textOn)
 
@@ -17,14 +15,14 @@ function ControlButton(props) {
     const [maxYear, setMaxYear] = useState(null)
 
     const onChange = () => {
-        if (type == "toggle" || type == "checkbox") {
+        if (type === "toggle" || type === "checkbox") {
             setFlag(!flag)
             if (setSecondaryFlag) {
                 // console.log('setting secondary flag', setSecondaryFlag)
                 setSecondaryFlag(flag)
             }
             setText(flag ? textOff : textOn)
-        } else if (type == "slider") {
+        } else if (type === "slider") {
 
         }
     }
@@ -38,7 +36,7 @@ function ControlButton(props) {
             nums = nums.map((num) => num + minYear)
             setFlag(nums)
         }
-    }, [minYear, maxYear])
+    }, [minYear, maxYear, setFlag])
 
     switch (type) {
         case "toggle":
