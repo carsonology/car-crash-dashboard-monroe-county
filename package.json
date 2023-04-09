@@ -28,7 +28,8 @@
     "react-switch": "^7.0.0",
     "simple-statistics": "^7.8.3",
     "turf": "^3.0.14",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "worker-loader": "^3.0.8"
   },
   "scripts": {
     "predeploy": "npm run build",
