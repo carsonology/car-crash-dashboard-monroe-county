@@ -12,6 +12,7 @@
     "@turf/random": "^6.5.0",
     "@turf/turf": "^6.5.0",
     "d3-array": "^3.2.3",
+    "gh-pages": "^5.0.0",
     "mapbox-gl": "^2.13.0",
     "multi-range-slider-react": "^2.0.3",
     "multiselect-react-dropdown": "^2.0.25",
