@@ -37,6 +37,10 @@ header {
   border-right: 1px solid gray;
 }
 
+.multi-select-years {
+  color: var(--text-dark);
+}
+
 input[type='checkbox'] {
   width: 22px !important;
   height: 22px !important;
@@ -50,7 +54,7 @@ input[type='checkbox'] {
   font-size: 0.8em;
   text-align: center;
   line-height: 1em;
-  /* background: rgb(0, 136, 0); */
+  background: rgb(0, 136, 0);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -145,23 +149,21 @@ h2 {
 .react-slider {
   width: 100%;
   margin-top: 4px;
+  margin-bottom: 40px;
 }
 
+/* 
 .react-slider.disabled {
   opacity: .5;
-}
+} */
 
 .thumb {
   cursor: pointer;
-  /*color for the thumb */
-  background: #088;
-  /* shape of the thumb: circle */
+  background: rgb(0, 136, 0);
   width: 15px;
   height: 15px;
   border-radius: 100%;
-  /* remove default outline when selected */
   outline: none;
-  /* transition: .2s; */
 }
 
 .disabled .thumb {
@@ -178,7 +180,7 @@ h2 {
 }
 
 .track.track-0 {
-  background: #088;
+  background: rgb(0, 136, 0);
 }
 
 .disabled .track.track-0 {
@@ -200,4 +202,48 @@ h2 {
   margin-top: 0 .5em .25em;
   padding-left: 10px;
   padding-right: 10px;
+}
+
+.multi-range-slider.year-slider {
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin-bottom: 40px;
+  margin-top: 25px;
+}
+
+.multi-range-slider.year-slider .bar-inner {
+  background-color: rgb(0, 136, 0);
+}
+
+.multi-range-slider.year-slider .bar {
+  background-color: rgb(0, 136, 0);
+  align-items: center;
+}
+
+.multi-range-slider.year-slider .bar,
+.multi-range-slider.year-slider .bar-left,
+.multi-range-slider.year-slider .bar-inner,
+.multi-range-slider.year-slider .bar-right {
+  box-shadow: none;
+  border: none;
+  height: 10px;
+}
+
+.multi-range-slider.year-slider .thumb:before {
+  display: none;
+}
+
+.multi-range-slider.year-slider .caption {
+  display: block;
+}
+
+.multi-range-slider.year-slider .caption span {
+  background-color: transparent;
+  box-shadow: none;
+  margin-left: -10px;
+}
+
+.multi-range-slider.year-slider .labels {
+  display: none;
 }
