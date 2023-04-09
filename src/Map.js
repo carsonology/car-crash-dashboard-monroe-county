@@ -9,9 +9,9 @@ function Map(props) {
     const {
         data,
         hexVisibility,
-        hexGridDataLarge,
-        hexGridDataMedium,
-        hexGridDataSmall,
+        // hexGridDataLarge,
+        // hexGridDataMedium,
+        // hexGridDataSmall,
         showDeaths,
         showInjuries,
         showMinorCrashes,
@@ -42,7 +42,7 @@ function Map(props) {
                 style: 'mapbox://styles/cterbush/clfyfv364003s01o4xuofdpp3',
                 // center it over Bloomington
                 center: [-86.52702437238956, 39.1656613635316],
-                zoom: 12,
+                zoom: 12.5,
                 // prevent from zooming out too far
                 minZoom: 10,
                 worldCopyJump: true
@@ -68,16 +68,16 @@ function Map(props) {
                     'type': 'vector',
                     url: 'mapbox://cterbush.asrfcark'
                 })
-                // hexbins geojson (generated in MapContext)
-                map.addSource('hexbin-data-large', {
-                    'type': 'geojson',
-                    'data': hexGridDataLarge
-                })
-                // hexbins geojson (generated in MapContext)
-                map.addSource('hexbin-data-medium', {
-                    'type': 'geojson',
-                    'data': hexGridDataMedium
-                })
+                // // hexbins geojson (generated in MapContext)
+                // map.addSource('hexbin-data-large', {
+                //     'type': 'geojson',
+                //     'data': hexGridDataLarge
+                // })
+                // // hexbins geojson (generated in MapContext)
+                // map.addSource('hexbin-data-medium', {
+                //     'type': 'geojson',
+                //     'data': hexGridDataMedium
+                // })
                 // hexbins geojson (generated in MapContext)
                 map.addSource('hexbin-data-small', {
                     'type': 'vector',
@@ -105,12 +105,19 @@ function Map(props) {
                     'paint': {
                         'fill-color': hexColor,
                         'fill-opacity': [
-                            // maybe use stops instead
-                            "interpolate", ["linear"], ["get", "a"],
-                            // if there are zero points, max opacity = 0
-                            0, 0,
-                            // if the density = 1, max opacity = 80%
-                            1, .8
+                            'step',
+                            ['get', 'n'],
+                            .1,
+                            100, .3,
+                            500, .5,
+                            1000, .7,
+                            // 1500
+                            // // maybe use stops instead
+                            // "interpolate", ["linear"], ["get", "a"],
+                            // // if there are zero points, max opacity = 0
+                            // 0, 0,
+                            // // if the density = 1, max opacity = 80%
+                            // 1, .8
                         ]
                     },
                 }).addLayer({
@@ -188,7 +195,15 @@ function Map(props) {
                     },
                     paint: {
                         'circle-color': pointColorDeath,
-                        'circle-radius': point_radius,
+                        'circle-radius': ['interpolate', ['linear'], ['zoom'],
+                            // at zoom level 10 => 1 px
+                            10, 1.5,
+                            // at zoom level 12 => 1.5 px
+                            12, 3,
+                            14, 6,
+                            // at zoom level 20 => 20 px
+                            20, 40
+                        ],
                         // no stroke
                         'circle-stroke-width': 0,
                         'circle-opacity': 1
@@ -202,7 +217,7 @@ function Map(props) {
 
         if (!map) initializeMap({ setMap, mapContainer });
 
-    }, [data, hexGridDataLarge]);
+    }, [data]);
 
 
     /*
@@ -277,33 +292,37 @@ function Map(props) {
             map.on('mouseleave', 'points-injuries', popupRemove)
             map.on('mouseleave', 'points-minor', popupRemove)
 
+            // map.on('mousemove', 'hex-small', (e) => {
+            //     console.log(e.features[0].properties.n, e.features[0].layer.paint['fill-opacity'])
+            // })
+
             // hover effect => council districts
             let hoverId = null;
 
             // })
-            map.on('mousemove', 'hex-small', (e) => {
-                if (hoverId) {
-                    map.removeFeatureState({
-                        source: 'hexbin-data-small',
-                        sourceLayer: 'hexagon-data-small-21dqvs',
-                        id: hoverId
-                    })
-                }
+            // map.on('mousemove', 'hex-small', (e) => {
+            //     if (hoverId) {
+            //         map.removeFeatureState({
+            //             source: 'hexbin-data-small',
+            //             sourceLayer: 'hexagon-data-small-21dqvs',
+            //             id: hoverId
+            //         })
+            //     }
 
-                hoverId = e.features[0].id
+            //     hoverId = e.features[0].id
 
-                map.setFeatureState(
-                    {
-                        source: 'hexbin-data-small',
-                        sourceLayer: 'hexagon-data-small-21dqvs',
-                        id: hoverId
-                    },
-                    {
-                        hover: true
-                    }
-                )
+            //     map.setFeatureState(
+            //         {
+            //             source: 'hexbin-data-small',
+            //             sourceLayer: 'hexagon-data-small-21dqvs',
+            //             id: hoverId
+            //         },
+            //         {
+            //             hover: true
+            //         }
+            //     )
 
-            })
+            // })
         }
 
     }, [map])
