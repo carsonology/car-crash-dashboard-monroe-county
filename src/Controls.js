@@ -3,6 +3,7 @@ import './App.css'
 import ControlButton from './ControlButton.js'
 
 function Controls(props) {
+    // console.log('hi')
     const {
         hexVisibility,
         setHexVisibility,
@@ -34,9 +35,9 @@ function Controls(props) {
                         d="M98.82,59l9.54-13.59c6.66,4.59,15.93,7,23.31,7,9.45,0,11.7-2.16,11.7-4.86s-2.7-3.78-12.51-4.59c-14.31-1.17-28.26-4.86-28.26-21.15C102.6,5.67,115.83,0,131,0c15.84,0,24.48,4.05,29.16,7.83l-9.9,14.31c-3.78-2.52-12.33-4.77-19-4.77s-8.73,1.08-8.73,3.69c0,3.24,2.79,4.05,12.69,4.86,14.94,1.26,28,4.14,28,20.7,0,13.5-11.52,22.23-30.87,22.23C114.66,68.85,105.84,64.53,98.82,59Z" />
                 </svg>
                 <h1>Monroe County Crash Dashboard</h1>
-                <p><em><a href="#" >About the data</a></em></p>
+                {/* <p><em><a href="#" >About the data</a></em></p> */}
 
-                {/* <h2>Key</h2>
+                <h2>Key</h2>
                 <div style={{ display: "flex", jusitfyContent: 'center', alignItems: 'center', marginBottom: '10px' }}>
                     <div style={{
                         height: '15px',
@@ -73,7 +74,71 @@ function Controls(props) {
                     <label>
                         <span>Fatal crash</span>
                     </label>
-                </div> */}
+                </div>
+
+                <label>
+                    <span>Number of crashes contained in each hexagon (2003-2022)</span>
+                </label>
+                <div style={{
+                    display: 'flex',
+                    width: '100%',
+                    flexFlow: 'row wrap',
+                    position: 'relative',
+                    marginTop: 8,
+                    marginBottom: 25
+                }}>
+                    <div style={{
+                        height: 20,
+                        background: 'rgb(119, 216, 240)',
+                        opacity: .1,
+                        flex: 1
+                    }}>
+                    </div>
+                    <div style={{
+                        height: 20,
+                        background: 'rgb(119, 216, 240)',
+                        opacity: .3,
+                        flex: 1
+                    }}>
+
+                    </div><div style={{
+                        height: 20,
+                        background: 'rgb(119, 216, 240)',
+                        opacity: .5,
+                        flex: 1
+                    }}>
+
+                    </div><div style={{
+                        height: 20,
+                        background: 'rgb(119, 216, 240)',
+                        opacity: .7,
+                        flex: 1
+                    }}>
+
+                        <p style={{
+                            position: 'absolute',
+                            top: 15,
+                            left: '21%',
+                            color: 'white',
+                            textAlign: 'center'
+                        }}>100</p>
+                        <p style={{
+                            position: 'absolute',
+                            top: 15,
+                            left: '46%',
+                            color: 'white',
+                            textAlign: 'center'
+                        }}>500</p>
+                        <p style={{
+                            position: 'absolute',
+                            top: 15,
+                            left: '68%',
+                            color: 'white',
+                            textAlign: 'center'
+                        }}>1,000</p>
+
+                    </div>
+                </div>
 
                 <h2>Filters</h2>
                 <div>
@@ -119,8 +184,8 @@ function Controls(props) {
                 /> */}
                 <ControlButton
                     type="toggle"
-                    textOn="Hexbins shown"
-                    textOff="Hexbins hidden"
+                    textOn="Hexagons "
+                    textOff="Hexagons"
                     flag={hexVisibility}
                     setFlag={setHexVisibility}
                 // setSecondaryFlag={setDistrictVisibility}
@@ -128,9 +193,12 @@ function Controls(props) {
 
                 <h2>Style</h2>
             </div>
-            <p><strong>Source:</strong> <a href="#">IDS analysis</a> of <a href="https://data.bloomington.in.gov/dataset/traffic-data">Bloomington traffic data</a></p>
+            {/* <p><strong>Source:</strong> <a href="#">IDS analysis</a> of <a href="https://data.bloomington.in.gov/dataset/traffic-data">Bloomington traffic data</a></p> */}
+            <p><strong>Source:</strong> IDS analysis of <a href="https://data.bloomington.in.gov/dataset/traffic-data">Bloomington traffic data</a></p>
         </div>
     )
 }
 
 export default Controls;
+
+
