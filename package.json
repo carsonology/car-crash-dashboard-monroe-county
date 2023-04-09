@@ -1,6 +1,7 @@
 {
   "name": "crash-dashboard",
   "version": "0.1.0",
+  "homepage": "https://carsonology.github.io/crash-dashboard",
   "private": true,
   "dependencies": {
     "@mapbox/mapbox-gl-geocoder": "^5.0.1",
@@ -12,12 +13,16 @@
     "@turf/turf": "^6.5.0",
     "d3-array": "^3.2.3",
     "mapbox-gl": "^2.13.0",
+    "multi-range-slider-react": "^2.0.3",
+    "multiselect-react-dropdown": "^2.0.25",
     "react": "^18.2.0",
     "react-button-slider": "^1.2.0",
     "react-dom": "^18.2.0",
+    "react-input-checkbox": "^1.1.0",
     "react-map-gl": "^7.0.21",
     "react-mapbox-gl": "^5.1.1",
     "react-scripts": "5.0.1",
+    "react-select": "^5.7.2",
     "react-slider": "^2.0.4",
     "react-switch": "^7.0.0",
     "simple-statistics": "^7.8.3",
@@ -25,6 +30,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
