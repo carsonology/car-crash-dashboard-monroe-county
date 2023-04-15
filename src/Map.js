@@ -7,6 +7,7 @@ import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 function Map(props) {
     const {
         hexVisibility,
+        speedVisibility,
         showDeaths,
         showInjuries,
         showMinorCrashes,
@@ -21,7 +22,12 @@ function Map(props) {
     const pointColorDeath = "red"
     const pointColorInjury = "orange"
     const borderColor = "rgb(53, 53, 53)"
-    // const labelColor = "rgb(120,120,120)"
+    const bounds = [
+        [-86.91808, 39.01706], // Southwest coordinates
+        [-86.16725, 39.33937] // Northeast coordinates
+    ]
+    // const speedCmap = ["#d7191c", "#fdae61", "#ffffbf", "#a6d96a", "#1a9641"]
+    const speedCmap = ["#d73027", "#fc8d59", "#fee08b", "#d9ef8b", "#91cf60", "#1a9850"]
 
     useEffect(() => {
 
@@ -32,6 +38,7 @@ function Map(props) {
             INITIALIZE MAP
         */
         const initializeMap = ({ setMap, mapContainer }) => {
+
             const map = new mapboxgl.Map({
                 // it will know where to put the map based on the mapContainer ref
                 container: mapContainer.current,
@@ -42,8 +49,9 @@ function Map(props) {
                 center: [-86.52702437238956, 39.1656613635316],
                 zoom: 12.5,
                 // prevent from zooming out too far
-                minZoom: 10,
-                worldCopyJump: true
+                // minZoom: 10,
+                worldCopyJump: true,
+                maxBounds: bounds
             }).addControl(
                 // add geocoder to enable search
                 new MapboxGeocoder({
@@ -56,21 +64,33 @@ function Map(props) {
                 setMap(map)
                 map.resize()
 
+                const layers = map.getStyle().layers;
+                // Find the index of the first symbol layer in the map style.
+                let firstSymbolId = 'road-label';
+                // for (const layer of layers) {
+                //     if (layer.type === 'label') {
+                //         firstSymbolId = layer.id;
+                //         break;
+                //     }
+                // }
+
                 /*
                     ADD DATA SOURCES
                 */
                 // crash data points 
                 map.addSource('crash-data-source', {
-                    // 'type': 'geojson',
-                    // 'data': data
                     'type': 'vector',
                     url: 'mapbox://cterbush.asrfcark'
                 })
                 // hexbins geojson tileset
                 map.addSource('hexbin-data-small', {
                     'type': 'vector',
-                    // 'data': 'https://studio.mapbox.com/tilesets/cterbush.3c2zgy5z'
                     url: 'mapbox://cterbush.3c2zgy5z',
+                })
+                // speed limits
+                map.addSource('speed-limits', {
+                    'type': 'vector',
+                    url: 'mapbox://cterbush.5608sxsh'
                 })
 
 
@@ -84,7 +104,7 @@ function Map(props) {
                     source: 'hexbin-data-small',
                     'source-layer': 'hexagon-data-small-21dqvs',
                     'layout': {
-                        'visibility': 'visible'
+                        'visibility': 'none'
                     },
                     'paint': {
                         'fill-color': hexColor,
@@ -97,14 +117,16 @@ function Map(props) {
                             1000, .7,
                         ]
                     },
-                }).addLayer({
+                }, firstSymbolId).addLayer({
                     // light border on each hexbin
                     'id': 'hex-borders-small',
                     'type': 'line',
                     minzoom: 15,
                     'source': 'hexbin-data-small',
                     'source-layer': 'hexagon-data-small-21dqvs',
-                    'layout': {},
+                    'layout': {
+                        'visibility': 'none'
+                    },
                     'paint': {
                         'line-color': borderColor,
                         'line-width': [
@@ -115,7 +137,51 @@ function Map(props) {
                         ]
 
                     }
-                })
+                }, firstSymbolId)
+
+                // speed limits
+                map.addLayer({
+                    'id': 'speed-limit-lines',
+                    'type': 'line',
+                    'source': 'speed-limits',
+                    'source-layer': 'speed-limits-7bpvb8',
+                    'layout': {
+                        visibility: 'visible',
+                    },
+                    'paint': {
+                        'line-color': {
+                            property: 'speedlimit',
+                            // colorSpace: 'magma',
+                            // ["#000004","#51127c","#b73779","#fc8961","#fcfdbf"]
+                            stops: [
+
+                                [0, speedCmap[5]],
+                                [15, speedCmap[4]],
+                                [20, speedCmap[3]],
+                                [30, speedCmap[2]],
+                                [40, speedCmap[1]],
+                                [55, speedCmap[0]],
+                            ]
+                        },
+                        'line-width': ['interpolate', ['linear'], ['zoom'],
+                            // at zoom level 10 => .5px
+                            10, .5,
+                            // at zoom level 12
+                            12, 1,
+                            14, 2,
+                            // at zoom level 20
+                            20, 15
+                        ],
+                        'line-opacity': .5
+                        // 'line-width': [
+                        //     'case',
+                        //     ['boolean', ['feature-state', 'hover'], false],
+                        //     ['match', ['get', 'density'], 0, 0, 4],
+                        //     ['match', ['get', 'density'], 0, 0, 1]
+                        // ]
+
+                    }
+                }, firstSymbolId)
 
                 const point_radius = ['interpolate', ['linear'], ['zoom'],
                     // at zoom level 10 => 1 px
@@ -141,7 +207,7 @@ function Map(props) {
                         'circle-stroke-width': 0,
                         'circle-opacity': .8
                     },
-                })
+                }, firstSymbolId)
 
                 map.addLayer({
                     id: 'points-minor',
@@ -158,7 +224,7 @@ function Map(props) {
                         'circle-stroke-width': 0,
                         'circle-opacity': .3
                     },
-                })
+                }, firstSymbolId)
 
                 // individual crash data points
                 map.addLayer({
@@ -184,7 +250,7 @@ function Map(props) {
                         'circle-stroke-width': 0,
                         'circle-opacity': 1
                     },
-                })
+                }, firstSymbolId)
 
 
 
@@ -266,30 +332,31 @@ function Map(props) {
             map.on('mouseleave', 'points-minor', popupRemove)
 
             // hover effect => council districts
-            let hoverId = null;
+            // let hoverId = null;
 
             // })
-            // map.on('mousemove', 'hex-small', (e) => {
-            //     if (hoverId) {
-            //         map.removeFeatureState({
-            //             source: 'hexbin-data-small',
-            //             sourceLayer: 'hexagon-data-small-21dqvs',
-            //             id: hoverId
-            //         })
-            //     }
+            // map.on('mousemove', 'speed-limit-lines', (e) => {
+            //     console.log(e.features[0].properties)
+            //     // if (hoverId) {
+            //     //     map.removeFeatureState({
+            //     //         source: 'hexbin-data-small',
+            //     //         sourceLayer: 'hexagon-data-small-21dqvs',
+            //     //         id: hoverId
+            //     //     })
+            //     // }
 
-            //     hoverId = e.features[0].id
+            //     // hoverId = e.features[0].id
 
-            //     map.setFeatureState(
-            //         {
-            //             source: 'hexbin-data-small',
-            //             sourceLayer: 'hexagon-data-small-21dqvs',
-            //             id: hoverId
-            //         },
-            //         {
-            //             hover: true
-            //         }
-            //     )
+            //     // map.setFeatureState(
+            //     //     {
+            //     //         source: 'hexbin-data-small',
+            //     //         sourceLayer: 'hexagon-data-small-21dqvs',
+            //     //         id: hoverId
+            //     //     },
+            //     //     {
+            //     //         hover: true
+            //     //     }
+            //     // )
 
             // })
         }
@@ -302,7 +369,14 @@ function Map(props) {
             map.setLayoutProperty('hex-borders-small', 'visibility', hexVisibility ? 'visible' : 'none');
         }
 
-    }, [hexVisibility])
+    }, [hexVisibility, map])
+
+    useEffect(() => {
+        if (map) {
+            map.setLayoutProperty('speed-limit-lines', 'visibility', speedVisibility ? 'visible' : 'none');
+        }
+
+    }, [speedVisibility, map])
 
     useEffect(() => {
         if (map) {
@@ -323,25 +397,25 @@ function Map(props) {
                 map.setFilter('points-minor', null)
             }
         }
-    }, [years])
+    }, [years, map])
 
     useEffect(() => {
         if (map) {
             map.setLayoutProperty('points-death', 'visibility', showDeaths ? 'visible' : 'none')
         }
-    }, [showDeaths])
+    }, [showDeaths, map])
 
     useEffect(() => {
         if (map) {
             map.setLayoutProperty('points-minor', 'visibility', showMinorCrashes ? 'visible' : 'none');
         }
-    }, [showMinorCrashes])
+    }, [showMinorCrashes, map])
 
     useEffect(() => {
         if (map) {
             map.setLayoutProperty('points-injuries', 'visibility', showInjuries ? 'visible' : 'none');
         }
-    }, [showInjuries])
+    }, [showInjuries, map])
 
 
     return (

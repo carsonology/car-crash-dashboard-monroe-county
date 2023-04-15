@@ -6,8 +6,8 @@ import Controls from './Controls.js'
 
 function App() {
 
-  const [hexVisibility, setHexVisibility] = useState(true)
-  // const [districtVisibility, setDistrictVisibility] = useState(false)
+  const [hexVisibility, setHexVisibility] = useState(false)
+  const [speedVisibility, setSpeedVisibility] = useState(true)
   const [showDeaths, setShowDeaths] = useState(true)
   const [showInjuries, setShowInjuries] = useState(true)
   const [showMinorCrashes, setShowMinorCrashes] = useState(true)
@@ -18,8 +18,8 @@ function App() {
       <Controls
         hexVisibility={hexVisibility}
         setHexVisibility={setHexVisibility}
-        // districtVisibility={districtVisibility}
-        // setDistrictVisibility={setDistrictVisibility}
+        speedVisibility={speedVisibility}
+        setSpeedVisibility={setSpeedVisibility}
         showDeaths={showDeaths}
         setShowDeaths={setShowDeaths}
         showInjuries={showInjuries}
@@ -31,7 +31,7 @@ function App() {
       />
       <MapContext
         hexVisibility={hexVisibility}
-        // districtVisibility={districtVisibility}
+        speedVisibility={speedVisibility}
         showDeaths={showDeaths}
         showInjuries={showInjuries}
         showMinorCrashes={showMinorCrashes}

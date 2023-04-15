@@ -21,7 +21,7 @@ function ControlButton(props) {
                 // console.log('setting secondary flag', setSecondaryFlag)
                 setSecondaryFlag(flag)
             }
-            setText(flag ? textOff : textOn)
+            setText(flag ? (textOff ? textOff : textOn) : textOn)
         } else if (type === "slider") {
 
         }
@@ -43,13 +43,6 @@ function ControlButton(props) {
             return (
                 <div className="dashControl">
                     <label style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        {/* {color && <div style={{
-                            height: '15px',
-                            width: '15px',
-                            backgroundColor: color,
-                            borderRadius: '50%',
-                            marginRight: '8px'
-                        }} />} */}
                         <span>{text}</span>
 
                         <Switch

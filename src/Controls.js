@@ -7,8 +7,8 @@ function Controls(props) {
     const {
         hexVisibility,
         setHexVisibility,
-        // districtVisibility,
-        // setDistrictVisibility,
+        speedVisibility,
+        setSpeedVisibility,
         showDeaths,
         setShowDeaths,
         showInjuries,
@@ -18,6 +18,33 @@ function Controls(props) {
         years,
         setYears
     } = props
+
+    const speedCmap = ["#d73027", "#fc8d59", "#fee08b", "#d9ef8b", "#91cf60", "#1a9850"]
+    const speedStops = ['55+', 40, 30, 20, 15, 'less than 15 ']
+
+    const hexOpacities = [.1, .3, .5, .7]
+
+    const pointData = [
+        {
+            color: 'red',
+            label: 'Fatal crash',
+            flag: showDeaths,
+            setFlag: setShowDeaths
+        },
+        {
+            color: 'orange',
+            label: 'Crash involving injury',
+            flag: showInjuries,
+            setFlag: setShowInjuries
+        },
+        {
+            color: 'yellow',
+            label: 'Nonfatal crash',
+            flag: showMinorCrashes,
+            setFlag: setShowMinorCrashes
+        }
+    ]
+
     return (
         <div className="Controls" style={{
             // height: '100%',
@@ -38,7 +65,44 @@ function Controls(props) {
                 {/* <p><em><a href="#" >About the data</a></em></p> */}
 
                 <h2>Key</h2>
-                <div style={{ display: "flex", jusitfyContent: 'center', alignItems: 'center', marginBottom: '10px' }}>
+                <ControlButton
+                    type="year-filter"
+                    textOn="Year"
+                    textOff="Year"
+                    flag={years}
+                    setFlag={setYears}
+                />
+
+                {pointData.map((d) => {
+                    return (
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            // alignItems: 'flex-start'
+                        }}>
+                            <div style={{ display: "flex", jusitfyContent: 'center', alignItems: 'center', marginBottom: '10px' }}>
+                                <div style={{
+                                    height: '15px',
+                                    width: '15px',
+                                    backgroundColor: d.color,
+                                    borderRadius: '50%',
+                                    opacity: .5,
+                                    marginRight: '8px'
+                                }} />
+                                <label>
+                                    <span>{d.label}</span>
+                                </label>
+                            </div>
+                            <ControlButton
+                                type="toggle"
+                                textOn=""
+                                flag={d.flag}
+                                setFlag={d.setFlag}
+                            />
+                        </div>
+                    )
+                })}
+                {/* <div style={{ display: "flex", jusitfyContent: 'center', alignItems: 'center', marginBottom: '10px' }}>
                     <div style={{
                         height: '15px',
                         width: '15px',
@@ -50,6 +114,12 @@ function Controls(props) {
                     <label>
                         <span>Nonfatal crash</span>
                     </label>
+                    <ControlButton
+                        type="toggle"
+                        textOn=""
+                        flag={showMinorCrashes}
+                        setFlag={setShowMinorCrashes}
+                    />
                 </div>
                 <div style={{ display: "flex", jusitfyContent: 'center', alignItems: 'center', marginBottom: '10px' }}>
                     <div style={{
@@ -62,6 +132,12 @@ function Controls(props) {
                     <label>
                         <span>Crash involving injury</span>
                     </label>
+                    <ControlButton
+                        type="toggle"
+                        textOn=""
+                        flag={showInjuries}
+                        setFlag={setShowInjuries}
+                    />
                 </div>
                 <div style={{ display: "flex", jusitfyContent: 'center', alignItems: 'center', marginBottom: '10px' }}>
                     <div style={{
@@ -74,106 +150,97 @@ function Controls(props) {
                     <label>
                         <span>Fatal crash</span>
                     </label>
-                </div>
-
-                <label>
-                    <span>Number of crashes contained in each hexagon (2003-2022)</span>
-                </label>
-                <div style={{
-                    display: 'flex',
-                    width: '100%',
-                    flexFlow: 'row wrap',
-                    position: 'relative',
-                    marginTop: 8,
-                    marginBottom: 25
-                }}>
-                    <div style={{
-                        height: 20,
-                        background: 'rgb(119, 216, 240)',
-                        opacity: .1,
-                        flex: 1
-                    }}>
-                    </div>
-                    <div style={{
-                        height: 20,
-                        background: 'rgb(119, 216, 240)',
-                        opacity: .3,
-                        flex: 1
-                    }}>
-
-                    </div><div style={{
-                        height: 20,
-                        background: 'rgb(119, 216, 240)',
-                        opacity: .5,
-                        flex: 1
-                    }}>
-
-                    </div><div style={{
-                        height: 20,
-                        background: 'rgb(119, 216, 240)',
-                        opacity: .7,
-                        flex: 1
-                    }}>
-
-                        <p style={{
-                            position: 'absolute',
-                            top: 15,
-                            left: '21%',
-                            color: 'white',
-                            textAlign: 'center'
-                        }}>100</p>
-                        <p style={{
-                            position: 'absolute',
-                            top: 15,
-                            left: '46%',
-                            color: 'white',
-                            textAlign: 'center'
-                        }}>500</p>
-                        <p style={{
-                            position: 'absolute',
-                            top: 15,
-                            left: '68%',
-                            color: 'white',
-                            textAlign: 'center'
-                        }}>1,000</p>
-
-                    </div>
-                </div>
-
-                <h2>Filters</h2>
-                <div>
                     <ControlButton
-                        type="checkbox"
-                        textOn="Fatal crashes"
-                        textOff="Fatal crashes"
+                        type="toggle"
+                        textOn=""
                         flag={showDeaths}
                         setFlag={setShowDeaths}
-                        color={'red'}
                     />
-                    <ControlButton
-                        type="checkbox"
-                        textOn="Crashes involving injuries"
-                        textOff="Crashes involving injuries"
-                        flag={showInjuries}
-                        setFlag={setShowInjuries}
-                        color={'orange'}
-                    />
-                    <ControlButton
-                        type="checkbox"
-                        textOn="Crashes with no deaths or injuries"
-                        textOff="Crashes with no deaths or injuries"
-                        flag={showMinorCrashes}
-                        setFlag={setShowMinorCrashes}
-                        color={'yellow'}
-                    />
-                    <ControlButton
-                        type="year-filter"
-                        textOn="Year"
-                        textOff="Year"
-                        flag={years}
-                        setFlag={setYears}
-                    />
-                </div>
+                </div> */}
+
+                <ControlButton
+                    type="toggle"
+                    textOn="Speed limits"
+                    flag={speedVisibility}
+                    setFlag={setSpeedVisibility}
+                // setSecondaryFlag={setDistrictVisibility}
+                />
+                {speedVisibility && speedCmap.map((color, i) => {
+                    return (
+                        <div style={{
+                            display: 'flex',
+                            paddingTop: 5,
+                            paddingBottom: 5,
+                            alignItems: 'center'
+                        }}>
+                            <div style={{
+                                width: 45,
+                                height: 4,
+                                borderRadius: 2,
+                                backgroundColor: color,
+                                opacity: .5,
+                                marginRight: 5,
+                            }} />
+                            <span>{speedStops[i]} mph</span>
+                        </div>
+                    )
+                })}
+
+                <ControlButton
+                    type="toggle"
+                    textOn="Heatmap"
+                    flag={hexVisibility}
+                    setFlag={setHexVisibility}
+                />
+
+                {hexVisibility && (
+                    <>
+                        <span className="small-label">Number of crashes contained in each hexagon (2003-2022)</span>
+                        <div style={{
+                            display: 'flex',
+                            width: '100%',
+                            flexFlow: 'row wrap',
+                            position: 'relative',
+                            marginTop: 8,
+                            marginBottom: 25
+                        }}>
+                            {hexOpacities.map((o) => {
+                                return (
+                                    <div style={{
+                                        height: 20,
+                                        background: 'rgb(119, 216, 240)',
+                                        opacity: o,
+                                        flex: 1
+                                    }} />
+                                )
+                            })}
+                            <div>
+                                <p style={{
+                                    position: 'absolute',
+                                    top: 15,
+                                    left: '21%',
+                                    color: 'white',
+                                    textAlign: 'center'
+                                }}>100</p>
+                                <p style={{
+                                    position: 'absolute',
+                                    top: 15,
+                                    left: '46%',
+                                    color: 'white',
+                                    textAlign: 'center'
+                                }}>500</p>
+                                <p style={{
+                                    position: 'absolute',
+                                    top: 15,
+                                    left: '68%',
+                                    color: 'white',
+                                    textAlign: 'center'
+                                }}>1,000</p>
+
+                            </div>
+                        </div>
+                    </>
+                )}
                 {/* <ControlButton
                     type="toggle"
                     textOn="City council districts shown"
@@ -182,20 +249,12 @@ function Controls(props) {
                     setFlag={setDistrictVisibility}
                     setSecondaryFlag={setHexVisibility}
                 /> */}
-                <ControlButton
-                    type="toggle"
-                    textOn="Hexagons "
-                    textOff="Hexagons"
-                    flag={hexVisibility}
-                    setFlag={setHexVisibility}
-                // setSecondaryFlag={setDistrictVisibility}
-                />
 
                 <h2>Style</h2>
             </div>
             {/* <p><strong>Source:</strong> <a href="#">IDS analysis</a> of <a href="https://data.bloomington.in.gov/dataset/traffic-data">Bloomington traffic data</a></p> */}
             <p><strong>Source:</strong> IDS analysis of <a href="https://data.bloomington.in.gov/dataset/traffic-data">Bloomington traffic data</a></p>
-        </div>
+        </div >
     )
 }
 

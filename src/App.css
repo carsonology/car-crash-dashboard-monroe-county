@@ -58,7 +58,7 @@ input[type='checkbox'] {
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 50%;
+  border-radius: 3px;
   margin-left: 15px;
 }
 

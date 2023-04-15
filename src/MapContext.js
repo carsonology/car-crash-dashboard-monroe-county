@@ -7,6 +7,7 @@ import mapboxgl from 'mapbox-gl';
 function MapContext(props) {
     const {
         hexVisibility,
+        speedVisibility,
         showDeaths,
         showInjuries,
         showMinorCrashes,
@@ -19,6 +20,7 @@ function MapContext(props) {
         <>
             <Map
                 hexVisibility={hexVisibility}
+                speedVisibility={speedVisibility}
                 showDeaths={showDeaths}
                 showInjuries={showInjuries}
                 showMinorCrashes={showMinorCrashes}
