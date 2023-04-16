@@ -102,14 +102,17 @@ function ControlButton(props) {
                 <label>
                     <span>Years</span>
                     <div className="multi-slider">
-                        <svg width="100%" height="100%" viewBox="0 0 380 30">
-                            <text x={(sliderValues[0] / 19 * 100) + '%'} y="30" style={{
+                        <svg width="100%" height="100%" viewBox="0 0 360 30" style={{
+                            margin: '0 auto',
+                            display: 'block'
+                        }}>
+                            <text x={(sliderValues[0] / 19 * 81) + 9.5 + '%'} y="30" textAnchor='middle' style={{
                                 fill: 'white',
-                                fontSize: 14
+                                fontSize: 22,
                             }}>{flag[0]}</text>
-                            <text x={((1 - sliderValues[2] / 19) * 100) + '%'} y="30" style={{
+                            <text x={((1 - sliderValues[2] / 19) * 81) + 9.5 + '%'} y="30" textAnchor='middle' style={{
                                 fill: 'white',
-                                fontSize: 14
+                                fontSize: 22,
                             }}>{flag.slice(-1)}</text>
                         </svg>
                         <MultiSlider
