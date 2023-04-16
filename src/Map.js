@@ -52,7 +52,8 @@ function Map(props) {
                 // add geocoder to enable search
                 new MapboxGeocoder({
                     accessToken: mapboxgl.accessToken,
-                    mapboxgl: mapboxgl
+                    mapboxgl: mapboxgl,
+                    collapsed: true
                 })
             )
 
