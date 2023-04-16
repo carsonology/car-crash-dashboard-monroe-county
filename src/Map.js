@@ -28,7 +28,7 @@ function Map(props) {
         [-86.16725, 39.33937] // Northeast coordinates
     ]
     // colormap for speed limit lines
-    const speedCmap = ["#d73027", "#fc8d59", "#fee08b", "#d9ef8b", "#91cf60", "#1a9850"]
+    const speedCmap = ["#d7191c", "#fdae61", "#ffffbf", "#a6d96a", "#1a9641"]
 
     useEffect(() => {
 
@@ -132,8 +132,7 @@ function Map(props) {
                             property: 's', // 's' property == speed limit
                             stops: [
                                 // set colors based on the cmap defined above
-                                [0, speedCmap[5]], // speed limit < 15
-                                [15, speedCmap[4]], // speed limit == 15
+                                [16, speedCmap[4]], // speed limit <= 16
                                 [20, speedCmap[3]], // speed limit 20, 25
                                 [30, speedCmap[2]], // speed limit 30, 35
                                 [40, speedCmap[1]], // speed limit 40, 45
@@ -308,6 +307,11 @@ function Map(props) {
                 map.on('mouseenter', id, (e) => popupFunction(e, id))
                 map.on('mouseleave', id, popupRemove)
             })
+
+            // double check speed color mapping
+            // map.on('mousemove', 'speed-limit-lines', (e) => {
+            //     console.log(e.features[0].properties)
+            // })
 
         }
 
