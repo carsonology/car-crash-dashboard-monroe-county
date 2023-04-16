@@ -32,9 +32,9 @@ function Map(props) {
 
     useEffect(() => {
 
-        // // fix for making mapbox work with react app
-        // // uncomment for deployment:
-        // mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker').default;
+        // fix for making mapbox work with react app
+        // uncomment for deployment:
+        mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker').default;
 
         /* 
             INITIALIZE MAP
