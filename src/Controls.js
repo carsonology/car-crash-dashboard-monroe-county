@@ -27,10 +27,8 @@ function Controls(props) {
 
     const windowWidth = useWindowWidth()
 
-    console.log(windowWidth)
-
-    const speedCmap = ["#d73027", "#fc8d59", "#fee08b", "#d9ef8b", "#91cf60", "#1a9850"]
-    const speedStops = ['55+', 40, 30, 20, 15, 'less than 15 ']
+    const speedCmap = ["#d7191c", "#fdae61", "#ffffbf", "#a6d96a", "#1a9641"]
+    const speedStops = ['55+', '40-45', '30-35', '20-25', '15 or less']
 
     const hexOpacities = [.1, .3, .5, .7]
 
@@ -179,7 +177,7 @@ function Controls(props) {
 
                     {hexVisibility && (
                         <>
-                            <span className="small-label">Number of crashes contained in each hexagon (2003-2022)</span>
+                            <span className="small-label">Number of crashes contained in each hexagon (total from 2003-2022)</span>
                             <div style={{
                                 display: 'flex',
                                 width: '100%',
