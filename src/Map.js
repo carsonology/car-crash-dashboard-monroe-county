@@ -9,6 +9,7 @@ mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worke
 
 function Map(props) {
     const {
+        fatalData,
         hexVisibility,
         speedVisibility,
         showDeaths,
@@ -16,6 +17,8 @@ function Map(props) {
         showMinorCrashes,
         years
     } = props
+
+    console.log(fatalData)
 
     // used to render the map
     const [map, setMap] = useState(null);
@@ -71,6 +74,11 @@ function Map(props) {
                 map.addSource('crash-data-source', {
                     'type': 'vector',
                     url: 'mapbox://cterbush.asrfcark'
+                })
+                // fatal crashes
+                map.addSource('fatal-crash-source', {
+                    'type': 'geojson',
+                    'data': fatalData
                 })
                 // hexbins geojson tileset
                 map.addSource('hexbin-data-small', {
@@ -203,8 +211,7 @@ function Map(props) {
                 map.addLayer({ // fatal crashes
                     id: 'points-death',
                     type: 'circle',
-                    source: 'crash-data-source',
-                    'source-layer': 'master_deathsmin',
+                    source: 'fatal-crash-source',
                     layout: {
                         visibility: 'visible',
                     },
