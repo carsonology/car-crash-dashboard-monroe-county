@@ -28,8 +28,8 @@ function Map(props) {
     const pointColorInjury = "orange" // injury-only crash color
     const borderColor = "rgb(53, 53, 53)" // heatmap border color
     const bounds = [ // prevent panning too far from Bloomington
-        [-86.91808, 39.01706], // Southwest coordinates
-        [-86.16725, 39.33937] // Northeast coordinates
+        [-86.87628, 38.86386], // Southwest coordinates
+        [-86.18347, 39.48197] // Northeast coordinates
     ]
     // colormap for speed limit lines
     const speedCmap = ["#d7191c", "#fdae61", "#ffffbf", "#a6d96a", "#1a9641"]
