@@ -26,13 +26,12 @@ function Map(props) {
         [-86.91808, 39.01706], // Southwest coordinates
         [-86.16725, 39.33937] // Northeast coordinates
     ]
-    // const speedCmap = ["#d7191c", "#fdae61", "#ffffbf", "#a6d96a", "#1a9641"]
     const speedCmap = ["#d73027", "#fc8d59", "#fee08b", "#d9ef8b", "#91cf60", "#1a9850"]
 
     useEffect(() => {
 
-        // eslint-disable-next-line import/no-webpack-loader-syntax
-        mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker').default;
+        // fix for making mapbox work with react app
+        // mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker').default;
 
         /* 
             INITIALIZE MAP
@@ -42,15 +41,12 @@ function Map(props) {
             const map = new mapboxgl.Map({
                 // it will know where to put the map based on the mapContainer ref
                 container: mapContainer.current,
-                // style: "mapbox://styles/mapbox/dark-v10",
-                // style: "mapbox://styles/cterbush/clfyfv364003s01o4xuofdpp3",
                 style: 'mapbox://styles/cterbush/clfyfv364003s01o4xuofdpp3',
                 // center it over Bloomington
                 center: [-86.52702437238956, 39.1656613635316],
                 zoom: 12.5,
-                // prevent from zooming out too far
-                // minZoom: 10,
                 worldCopyJump: true,
+                // prevent panning/zooming too far away from Bloomington
                 maxBounds: bounds
             }).addControl(
                 // add geocoder to enable search
@@ -64,15 +60,7 @@ function Map(props) {
                 setMap(map)
                 map.resize()
 
-                const layers = map.getStyle().layers;
-                // Find the index of the first symbol layer in the map style.
                 let firstSymbolId = 'road-label';
-                // for (const layer of layers) {
-                //     if (layer.type === 'label') {
-                //         firstSymbolId = layer.id;
-                //         break;
-                //     }
-                // }
 
                 /*
                     ADD DATA SOURCES
@@ -148,13 +136,11 @@ function Map(props) {
                     'layout': {
                         visibility: 'visible',
                     },
+                    // 'maxzoom': 15,
                     'paint': {
                         'line-color': {
                             property: 'speedlimit',
-                            // colorSpace: 'magma',
-                            // ["#000004","#51127c","#b73779","#fc8961","#fcfdbf"]
                             stops: [
-
                                 [0, speedCmap[5]],
                                 [15, speedCmap[4]],
                                 [20, speedCmap[3]],
@@ -165,7 +151,7 @@ function Map(props) {
                         },
                         'line-width': ['interpolate', ['linear'], ['zoom'],
                             // at zoom level 10 => .5px
-                            10, .5,
+                            10, 1,
                             // at zoom level 12
                             12, 1,
                             14, 2,
@@ -173,13 +159,6 @@ function Map(props) {
                             20, 15
                         ],
                         'line-opacity': .5
-                        // 'line-width': [
-                        //     'case',
-                        //     ['boolean', ['feature-state', 'hover'], false],
-                        //     ['match', ['get', 'density'], 0, 0, 4],
-                        //     ['match', ['get', 'density'], 0, 0, 1]
-                        // ]
-
                     }
                 }, firstSymbolId)
 
@@ -259,7 +238,7 @@ function Map(props) {
 
         if (!map) initializeMap({ setMap, mapContainer });
 
-    }, []);
+    }, [bounds, map, speedCmap]);
 
 
     /*
