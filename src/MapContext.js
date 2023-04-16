@@ -1,8 +1,7 @@
-import React, { useState } from "react"
+import React from "react"
 import './App.css'
 import Map from './Map.js'
 import mapboxgl from 'mapbox-gl';
-
 
 function MapContext(props) {
     const {
