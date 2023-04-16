@@ -247,3 +247,16 @@ h2 {
 .multi-range-slider.year-slider .labels {
   display: none;
 }
+
+.multi-slider svg {
+  /* width: 110%;
+  margin-left: -5%; */
+}
+
+.multi-slider svg circle:first-child {
+  fill: rgb(0, 136, 0);
+}
+
+.multi-slider svg line {
+  stroke-width: 14px !important;
+}
