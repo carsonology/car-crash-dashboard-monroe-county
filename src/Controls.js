@@ -3,7 +3,6 @@ import './App.css'
 import ControlButton from './ControlButton.js'
 
 function Controls(props) {
-    // console.log('hi')
     const {
         hexVisibility,
         setHexVisibility,
@@ -62,7 +61,7 @@ function Controls(props) {
                         d="M98.82,59l9.54-13.59c6.66,4.59,15.93,7,23.31,7,9.45,0,11.7-2.16,11.7-4.86s-2.7-3.78-12.51-4.59c-14.31-1.17-28.26-4.86-28.26-21.15C102.6,5.67,115.83,0,131,0c15.84,0,24.48,4.05,29.16,7.83l-9.9,14.31c-3.78-2.52-12.33-4.77-19-4.77s-8.73,1.08-8.73,3.69c0,3.24,2.79,4.05,12.69,4.86,14.94,1.26,28,4.14,28,20.7,0,13.5-11.52,22.23-30.87,22.23C114.66,68.85,105.84,64.53,98.82,59Z" />
                 </svg>
                 <h1>Monroe County Crash Dashboard</h1>
-                {/* <p><em><a href="#" >About the data</a></em></p> */}
+                <p><em><a href="#" >About the data</a></em></p>
 
                 <h2>Key</h2>
                 <ControlButton
@@ -72,6 +71,8 @@ function Controls(props) {
                     flag={years}
                     setFlag={setYears}
                 />
+
+                <hr />
 
                 {pointData.map((d) => {
                     return (
@@ -102,89 +103,39 @@ function Controls(props) {
                         </div>
                     )
                 })}
-                {/* <div style={{ display: "flex", jusitfyContent: 'center', alignItems: 'center', marginBottom: '10px' }}>
-                    <div style={{
-                        height: '15px',
-                        width: '15px',
-                        backgroundColor: 'yellow',
-                        borderRadius: '50%',
-                        opacity: .5,
-                        marginRight: '8px'
-                    }} />
-                    <label>
-                        <span>Nonfatal crash</span>
-                    </label>
-                    <ControlButton
-                        type="toggle"
-                        textOn=""
-                        flag={showMinorCrashes}
-                        setFlag={setShowMinorCrashes}
-                    />
-                </div>
-                <div style={{ display: "flex", jusitfyContent: 'center', alignItems: 'center', marginBottom: '10px' }}>
-                    <div style={{
-                        height: '15px',
-                        width: '15px',
-                        backgroundColor: 'orange',
-                        borderRadius: '50%',
-                        marginRight: '8px'
-                    }} />
-                    <label>
-                        <span>Crash involving injury</span>
-                    </label>
-                    <ControlButton
-                        type="toggle"
-                        textOn=""
-                        flag={showInjuries}
-                        setFlag={setShowInjuries}
-                    />
-                </div>
-                <div style={{ display: "flex", jusitfyContent: 'center', alignItems: 'center', marginBottom: '10px' }}>
-                    <div style={{
-                        height: '15px',
-                        width: '15px',
-                        backgroundColor: 'red',
-                        borderRadius: '50%',
-                        marginRight: '8px'
-                    }} />
-                    <label>
-                        <span>Fatal crash</span>
-                    </label>
-                    <ControlButton
-                        type="toggle"
-                        textOn=""
-                        flag={showDeaths}
-                        setFlag={setShowDeaths}
-                    />
-                </div> */}
+                <hr />
 
                 <ControlButton
                     type="toggle"
                     textOn="Speed limits"
                     flag={speedVisibility}
                     setFlag={setSpeedVisibility}
-                // setSecondaryFlag={setDistrictVisibility}
                 />
+                {speedVisibility && (<span className="small-label">2022 data</span>)}
                 {speedVisibility && speedCmap.map((color, i) => {
                     return (
-                        <div style={{
-                            display: 'flex',
-                            paddingTop: 5,
-                            paddingBottom: 5,
-                            alignItems: 'center'
-                        }}>
+                        <>
                             <div style={{
-                                width: 45,
-                                height: 4,
-                                borderRadius: 2,
-                                backgroundColor: color,
-                                opacity: .5,
-                                marginRight: 5,
-                            }} />
-                            <span>{speedStops[i]} mph</span>
-                        </div>
+                                display: 'flex',
+                                paddingTop: 5,
+                                paddingBottom: 5,
+                                alignItems: 'center'
+                            }}>
+                                <div style={{
+                                    width: 45,
+                                    height: 4,
+                                    borderRadius: 2,
+                                    backgroundColor: color,
+                                    opacity: .5,
+                                    marginRight: 5,
+                                }} />
+                                <span>{speedStops[i]} mph</span>
+                            </div>
+                        </>
                     )
                 })}
+
+                <hr />
 
                 <ControlButton
                     type="toggle"
@@ -241,16 +192,6 @@ function Controls(props) {
                         </div>
                     </>
                 )}
-                {/* <ControlButton
-                    type="toggle"
-                    textOn="City council districts shown"
-                    textOff="City council districts hidden"
-                    flag={districtVisibility}
-                    setFlag={setDistrictVisibility}
-                    setSecondaryFlag={setHexVisibility}
-                /> */}
-
-                <h2>Style</h2>
             </div>
             {/* <p><strong>Source:</strong> <a href="#">IDS analysis</a> of <a href="https://data.bloomington.in.gov/dataset/traffic-data">Bloomington traffic data</a></p> */}
             <p><strong>Source:</strong> IDS analysis of <a href="https://data.bloomington.in.gov/dataset/traffic-data">Bloomington traffic data</a></p>
