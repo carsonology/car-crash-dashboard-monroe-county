@@ -63,7 +63,7 @@ function Controls(props) {
                 <h1>Monroe County Crash Dashboard</h1>
                 <p><em><a href="#" >About the data</a></em></p>
 
-                <h2>Key</h2>
+                {/* <h2>Key</h2> */}
                 <ControlButton
                     type="year-filter"
                     textOn="Year"
