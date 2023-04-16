@@ -17,7 +17,7 @@ function App() {
   const [showMinorCrashes, setShowMinorCrashes] = useState(true) // show/hide all others
   const [years, setYears] = useState([2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022]) // set the years filter
   // if it's mobile, hide the menu on the first load
-  const [menuOpen, setMenuOpen] = useState(detectMobile.isMobile() ? true : false)
+  const [menuOpen, setMenuOpen] = useState(true)
 
   const menuOn = () => { // show the controls menu
     setMenuOpen(true)
