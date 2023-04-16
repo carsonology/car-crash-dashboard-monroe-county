@@ -18,8 +18,6 @@ function Map(props) {
         years
     } = props
 
-    console.log(fatalData)
-
     // used to render the map
     const [map, setMap] = useState(null);
     const mapContainer = useRef(null);
