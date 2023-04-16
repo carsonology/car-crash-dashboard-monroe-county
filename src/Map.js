@@ -139,7 +139,7 @@ function Map(props) {
                     // 'maxzoom': 15,
                     'paint': {
                         'line-color': {
-                            property: 'speedlimit',
+                            property: 's',
                             stops: [
                                 [0, speedCmap[5]],
                                 [15, speedCmap[4]],
