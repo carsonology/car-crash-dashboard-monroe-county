@@ -1,7 +1,7 @@
 import React from "react"
 import './App.css'
 import ControlButton from './ControlButton.js'
-import useMobileDetect from 'use-mobile-detect-hook';
+import useMobileDetect from 'use-mobile-detect-hook'
 import { useWindowWidth } from '@react-hook/window-size'
 
 function Controls(props) {

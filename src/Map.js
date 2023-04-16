@@ -379,7 +379,6 @@ function Map(props) {
         }
     }, [showInjuries, map])
 
-
     return (
         <div ref={mapContainer} className="mapContainer" />
     )

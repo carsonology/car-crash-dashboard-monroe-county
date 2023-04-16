@@ -2,12 +2,8 @@ import React, { useState } from "react";
 import './App.css';
 import MapContext from './MapContext.js'
 import Controls from './Controls.js'
-import useMobileDetect from 'use-mobile-detect-hook';
 
 function App() {
-
-  // check if the user is on mobile
-  const detectMobile = useMobileDetect()
 
   // state variables to control map layers across whole app
   const [hexVisibility, setHexVisibility] = useState(false) // show/hide heatmapj
@@ -50,6 +46,8 @@ function App() {
       />
       {/* render the map */}
       <MapContext
+        menuOpen={menuOpen}
+        setMenuOpen={setMenuOpen}
         hexVisibility={hexVisibility}
         speedVisibility={speedVisibility}
         showDeaths={showDeaths}
