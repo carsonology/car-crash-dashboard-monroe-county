@@ -3,7 +3,7 @@ import './App.css'
 import Switch from "react-switch"
 import ReactSlider from 'react-slider'
 import { Checkbox } from 'react-input-checkbox';
-import MultiRangeSlider from "multi-range-slider-react";
+import MultiSlider from 'multi-slider';
 
 function ControlButton(props) {
 
@@ -11,8 +11,7 @@ function ControlButton(props) {
 
     const [text, setText] = useState(textOn)
 
-    const [minYear, setMinYear] = useState(null)
-    const [maxYear, setMaxYear] = useState(null)
+    const [sliderValues, setSliderValues] = useState([0, 19, 0])
 
     const onChange = () => {
         if (type === "toggle" || type === "checkbox") {
@@ -27,16 +26,15 @@ function ControlButton(props) {
         }
     }
 
-
     useEffect(() => {
-        if (minYear) {
-            const arrLength = maxYear - minYear + 1
+        if (type === "year-filter") {
+            const arrLength = sliderValues[1] + 1
             let nums = [...Array(arrLength).keys()]
 
-            nums = nums.map((num) => num + minYear)
+            nums = nums.map((num) => num + 2003 + sliderValues[0])
             setFlag(nums)
         }
-    }, [minYear, maxYear, setFlag])
+    }, [sliderValues, setFlag])
 
     switch (type) {
         case "toggle":
@@ -100,23 +98,26 @@ function ControlButton(props) {
                 </div>
             )
         case "year-filter":
-
             return (
                 <label>
                     <span>Years</span>
-                    <MultiRangeSlider
-                        className={'year-slider'}
-                        min={2003}
-                        max={2022}
-                        step={1}
-                        minValue={2003}
-                        maxValue={2022}
-                        onInput={(e) => {
-                            setMinYear(e.minValue)
-                            setMaxYear(e.maxValue)
-                        }}
-                        ruler='false'
-                    />
+                    <div className="multi-slider">
+                        <svg width="100%" height="100%" viewBox="0 0 380 30">
+                            <text x={(sliderValues[0] / 19 * 100) + '%'} y="30" style={{
+                                fill: 'white',
+                                fontSize: 14
+                            }}>{flag[0]}</text>
+                            <text x={((1 - sliderValues[2] / 19) * 100) + '%'} y="30" style={{
+                                fill: 'white',
+                                fontSize: 14
+                            }}>{flag.slice(-1)}</text>
+                        </svg>
+                        <MultiSlider
+                            colors={['gray', 'rgb(0, 136, 0)', 'gray']}
+                            values={sliderValues}
+                            onChange={e => setSliderValues(e)}
+                        />
+                    </div>
                 </label>
             )
     }
