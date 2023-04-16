@@ -3,6 +3,8 @@ import mapboxgl from 'mapbox-gl';
 import "mapbox-gl/dist/mapbox-gl.css";
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import MapboxWorker from 'worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker';
 
 function Map(props) {
     const {
@@ -34,7 +36,7 @@ function Map(props) {
 
         // fix for making mapbox work with react app
         // uncomment for deployment:
-        mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker').default;
+        // mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker').default;
 
         /* 
             INITIALIZE MAP
