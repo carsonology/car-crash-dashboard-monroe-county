@@ -21,9 +21,9 @@ function MapContext(props) {
         years
     } = props
 
-    const [fatalData, setFatalData] = useState(null)
-    const [injuryData, setInjuryData] = useState(null)
-    const [otherData, setOtherData] = useState(null)
+    const [fatalData, setFatalData] = useState({type: 'FeatureCollection', features: []})
+    const [injuryData, setInjuryData] = useState({type: 'FeatureCollection', features: []})
+    const [otherData, setOtherData] = useState({type: 'FeatureCollection', features: []})
 
     // check if the user is on mobile
     const detectMobile = useMobileDetect()

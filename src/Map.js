@@ -252,10 +252,10 @@ function Map(props) {
             })
         }
 
-        // if the map hasn't rendered yet, render it
-        if (!map) initializeMap({ setMap, mapContainer });
+        // if the map hasn't rendered yet and we have all our data loaded, render it
+        if (!map && fatalData.features.length > 0 && otherData.features.length > 0 && injuryData.features.length > 0) initializeMap({ setMap, mapContainer });
 
-    }, [map, fatalData, otherData, injuryData]);
+    }, [map, fatalData.features.length, otherData.features.length, injuryData.features.length]);
 
     useEffect(() => {
         console.log('map', map)
@@ -266,7 +266,6 @@ function Map(props) {
         POPUPS & HOVER EFFECTS
     */
     useEffect(() => {
-
         if (map) { // once the map has rendered
             // Create a popup, but don't add it to the map yet.
             const popup = new mapboxgl.Popup({
@@ -357,7 +356,6 @@ function Map(props) {
             // })
 
         }
-
     }, [map])
 
     useEffect(() => { // hide/show heatmap
