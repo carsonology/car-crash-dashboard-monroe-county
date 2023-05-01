@@ -303,3 +303,35 @@ hr {
 .multi-slider svg line {
   stroke-width: 14px !important;
 }
+
+.tooltip table {
+  border: 0 solid blue;
+  border-collapse: collapse;
+  width: 100%;
+  padding: 8px 10px;
+  margin: 10px 0 0;
+  font-size: 14px;
+}
+
+.tooltip th {
+  text-align: left;
+  font-weight: normal;
+}
+
+.tooltip td {
+  text-align: right;
+}
+
+.tooltip tr {
+  display: flex;
+  padding: 4px 8px;
+  justify-content: space-between;
+}
+
+.tooltip tr:nth-child(even) {
+  background: #FFF;
+}
+
+.tooltip tr:nth-child(odd) {
+  background: var(--text);
+}
