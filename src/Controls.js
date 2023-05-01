@@ -118,7 +118,7 @@ function Controls(props) {
                                         width: '15px',
                                         backgroundColor: d.color,
                                         borderRadius: '50%',
-                                        opacity: .5,
+                                        // opacity: .5,
                                         marginRight: '8px'
                                     }} />
                                     <label>
@@ -134,6 +134,25 @@ function Controls(props) {
                             </div>
                         )
                     })}
+                    <hr />
+
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                    }}>
+                        <div style={{ display: "flex", jusitfyContent: 'center', alignItems: 'center', marginBottom: '10px' }}>
+                            <label>
+                                <span>Only show crashes involving pedestrians or cyclists</span>
+                            </label>
+                        </div>
+                        <ControlButton
+                            type="toggle"
+                            textOn=""
+                        // flag={d.flag}
+                        // setFlag={d.setFlag}
+                        />
+                    </div>
+
                     <hr />
 
                     <ControlButton
@@ -157,7 +176,7 @@ function Controls(props) {
                                         height: 4,
                                         borderRadius: 2,
                                         backgroundColor: color,
-                                        opacity: .5,
+                                        opacity: .8,
                                         marginRight: 5,
                                     }} />
                                     <span>{speedStops[i]} mph</span>

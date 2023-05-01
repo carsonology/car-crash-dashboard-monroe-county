@@ -10,6 +10,8 @@ mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worke
 function Map(props) {
     const {
         fatalData,
+        injuryData,
+        otherData,
         hexVisibility,
         speedVisibility,
         showDeaths,
@@ -69,9 +71,19 @@ function Map(props) {
                     ADD DATA SOURCES
                 */
                 // crash data points 
-                map.addSource('crash-data-source', {
-                    'type': 'vector',
-                    url: 'mapbox://cterbush.asrfcark'
+                // map.addSource('crash-data-source', {
+                //     // 'type': 'vector',
+                //     // url: 'mapbox://cterbush.asrfcark',
+                //     'type': 'geojson',
+                //     'data': jitteredData
+                // })
+                map.addSource('injury-crash-source', {
+                    'type': 'geojson',
+                    'data': injuryData
+                })
+                map.addSource('other-crash-source', {
+                    'type': 'geojson',
+                    'data': otherData
                 })
                 // fatal crashes
                 map.addSource('fatal-crash-source', {
@@ -173,10 +185,10 @@ function Map(props) {
                 ]
 
                 map.addLayer({ // crashes with no injuries or deaths
-                    id: 'points-minor',
+                    id: 'points-other',
                     type: 'circle',
-                    source: 'crash-data-source',
-                    'source-layer': 'master_minormin',
+                    source: 'other-crash-source',
+                    // 'source-layer': 'master_minormin',
                     layout: {
                         visibility: 'visible',
                     },
@@ -192,8 +204,8 @@ function Map(props) {
                 map.addLayer({ // crashes with injuries only
                     id: 'points-injuries',
                     type: 'circle',
-                    source: 'crash-data-source',
-                    'source-layer': 'master_injuriesmin',
+                    source: 'injury-crash-source',
+                    // 'source-layer': 'master_injuriesmin',
                     layout: {
                         visibility: 'visible',
                     },
@@ -256,30 +268,22 @@ function Map(props) {
             })
 
             // function to show the pop up on each points layer
-            const popupFunction = (e, layer_name) => {
+            const popupFunction = (e) => {
                 map.getCanvas().style.cursor = 'pointer' // change cursor when hovering
 
                 const hoveredPoint = e.features[0]
 
                 const coordinates = hoveredPoint.geometry.coordinates.slice() // get coords
-                const primaryFactor = hoveredPoint.properties.p // get primary factor
-                const date = hoveredPoint.properties.d // get date
-                let deaths = 0
-                let injuries = 0
-                // the minified geojsons encoded some fields differently, 
-                // so the if/else statement makes sure it shows the proper things
-                if (layer_name == 'points-minor') {
-                    // in the non-fatal crash geojson, we already know there are no 
-                    // deaths or injuries since it's pre-filtered, so keep them as zero
-                    deaths = 0
-                    injuries = 0
-                } else {
-                    // 'a' field == number of deaths
-                    deaths = hoveredPoint.properties.a
-                    // 'n' field == number of injuries
-                    injuries = hoveredPoint.properties.n
-                }
+                const primaryFactor = hoveredPoint.properties.f // get primary factor
+                const date = hoveredPoint.properties.dt // get date
+                let deaths = hoveredPoint.properties.d ? hoveredPoint.properties.d : 0
+                let injuries = hoveredPoint.properties.i ? hoveredPoint.properties.i : 0
                 const mannerOfCollision = hoveredPoint.properties.m
+                const road1 = hoveredPoint.properties['r'] // Roadway Id
+                const road2 = hoveredPoint.properties['r2'] // Intersecting Road
+                const pedestrians = hoveredPoint.properties['p'] ? hoveredPoint.properties['p'] : false // If pedestrians involved in crash
+                const cyclists = hoveredPoint.properties['c'] ? hoveredPoint.properties['c'] : false  // If cyclists involved in crash
+                const vehicles = hoveredPoint.properties['v'] // Num vehicles involved in crash
 
                 // Ensure that if the map is zoomed out such that multiple
                 // copies of the feature are visible, the popup appears
@@ -288,16 +292,41 @@ function Map(props) {
                     coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
                 }
 
+                console.log(pedestrians)
+
                 // create popup contents based on the data extracted above
                 let popupHTML = `
-                                <p style=margin-bottom:0;><strong>${new Date(date).toLocaleDateString('en-us', { hour: "numeric", year: "numeric", month: "short", day: "numeric" })}</strong></p>
+                            <div class="tooltip">
+                                <p style=font-size:1.5em;margin-bottom:0;><strong>${road1}${road2 ? ' & ' + road2 : ''}</strong></p>
+                                <p style=color:var(--darkgray);margin-top:.2em;margin-bottom:0;>${new Date(date).toLocaleDateString('en-us', { hour: "numeric", year: "numeric", month: "short", day: "numeric" })}</p>
                                 <p style=margin-bottom:0;><strong>Primary factor:</strong> ${primaryFactor ? primaryFactor.charAt(0).toUpperCase() + primaryFactor.slice(1).toLowerCase() : 'Not listed'}</p>
                                 <p style=margin-bottom:0;><strong>Type of collision:</strong> ${mannerOfCollision ? mannerOfCollision.charAt(0).toUpperCase() + mannerOfCollision.slice(1).toLowerCase() : 'Not listed'}</p>
-                                <div style="display: flex; justify-content: space-between;">
-                                <p style=margin-bottom:0;><strong>Deaths:</strong> ${deaths ? deaths : '0'}</p>
-                                <p style=margin-bottom:0;><strong>Injuries:</strong> ${injuries ? injuries : '0'}</p>
-                                </div>
+                                <table>
+                                    <tr>
+                                        <th>Deaths</th>
+                                        <td>${deaths}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Injuries</th>
+                                        <td>${injuries}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Pedestrians involved</th>
+                                        <td>${pedestrians ? "True" : 'False'}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Cyclists involved</th>
+                                        <td>${cyclists ? "True" : 'False'}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Vehicles involved</th>
+                                        <td>${vehicles ? vehicles : 'Unknown'}</td>
+                                    </tr>
+                                </table>
+                            </div>
                             `
+
+                // cyclists.charAt(0).toUpperCase() + cyclists.slice(1)
 
                 // Populate the popup and set its coordinates
                 // based on the feature found.
@@ -310,9 +339,15 @@ function Map(props) {
             }
 
             // apply popup function to all points layers
-            const pointLayers = ['points-death', 'points-injuries', 'points-minor']
+            const pointLayers = ['points-death',
+                'points-injuries',
+                'points-other']
             pointLayers.map((id) => {
-                map.on('mouseenter', id, (e) => popupFunction(e, id))
+                map.on('mouseenter', id, (e) => {
+                    // console.log(e.features[0].properties.r)
+                    console.log('adding popup')
+                    popupFunction(e, id)
+                })
                 map.on('mouseleave', id, popupRemove)
             })
 
@@ -347,11 +382,13 @@ function Map(props) {
             // iterate through the `years` state var, which is controlled by the years slider in the Controls menu
             // for each year, add a filtering string that can be added to the map layer
             years.forEach((year) => {
-                yearFilter.push(['in', year.toString(), ['get', 'd']])
+                yearFilter.push(['in', year.toString(), ['get', 'dt']])
             })
 
             // apply year filter to all point layers
-            const pointLayers = ['points-death', 'points-injuries', 'points-minor']
+            const pointLayers = ['points-death',
+                'points-injuries',
+                'points-other']
             if (yearFilter.length > 0) {
                 // apply popup function to all points layers
                 pointLayers.map((id) => map.setFilter(id, ['any', ...yearFilter]))
@@ -369,7 +406,7 @@ function Map(props) {
 
     useEffect(() => { // hide/show nonfatal crash points
         if (map) {
-            map.setLayoutProperty('points-minor', 'visibility', showMinorCrashes ? 'visible' : 'none');
+            map.setLayoutProperty('points-other', 'visibility', showMinorCrashes ? 'visible' : 'none');
         }
     }, [showMinorCrashes, map])
 
