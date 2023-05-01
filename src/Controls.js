@@ -61,10 +61,6 @@ function Controls(props) {
 
     return (
         <div className="Controls" style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            flexFlow: 'column nowrap',
-            overflow: 'scroll',
             width: menuOpen ? detectMobile.isMobile() ? windowWidth * .8 : '250px' : 0,
         }}>
             <div className="controls-inner" style={{
@@ -74,7 +70,6 @@ function Controls(props) {
                     <div style={{
                         display: 'flex',
                         justifyContent: 'space-between',
-                        // alignItems: 'center'
                     }}>
                         <svg className="logo" viewBox="0 0 163.17 68.85">
                             <path d="M0,67.77V1.08H19.89V67.77Z" />
@@ -108,12 +103,13 @@ function Controls(props) {
 
                     <hr />
 
-                    {pointData.map((d) => {
+                    {pointData.map((d, i) => {
                         return (
-                            <div style={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                            }}>
+                            <div key={i}
+                                style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                }}>
                                 <div style={{ display: "flex", jusitfyContent: 'center', alignItems: 'center', marginBottom: '10px' }}>
                                     <div style={{
                                         height: '15px',
@@ -167,7 +163,7 @@ function Controls(props) {
                     {speedVisibility && speedCmap.map((color, i) => {
                         return (
                             <>
-                                <div style={{
+                                <div key={i} style={{
                                     display: 'flex',
                                     paddingTop: 5,
                                     paddingBottom: 5,
@@ -207,9 +203,9 @@ function Controls(props) {
                                 marginTop: 8,
                                 marginBottom: 25
                             }}>
-                                {hexOpacities.map((o) => {
+                                {hexOpacities.map((o, i) => {
                                     return (
-                                        <div style={{
+                                        <div key={i} style={{
                                             height: 20,
                                             background: 'rgb(119, 216, 240)',
                                             opacity: o,
@@ -245,8 +241,8 @@ function Controls(props) {
                         </>
                     )}
                 </div>
-                {/* <p><strong>Source:</strong> <a href="#">IDS analysis</a> of <a href="https://data.bloomington.in.gov/dataset/traffic-data">Bloomington traffic data</a></p> */}
-                <p><strong>Source:</strong> IDS analysis of <a href="https://data.bloomington.in.gov/dataset/traffic-data">Bloomington traffic data</a></p>
+                <p><strong>Source:</strong> <a href="#">IDS analysis</a> of <a href="https://data.bloomington.in.gov/dataset/traffic-data">Bloomington traffic data</a></p>
+                {/* <p><strong>Source:</strong> IDS analysis of <a href="https://data.bloomington.in.gov/dataset/traffic-data">Bloomington traffic data</a></p> */}
             </div>
         </div >
     )
