@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react"
 import './App.css'
 import Map from './Map.js'
 import mapboxgl from 'mapbox-gl'
-import fatalDataImport from './data/master_deaths.min.geojson'
 import useMobileDetect from 'use-mobile-detect-hook'
 
 import death_data from './data/master-deaths.min.geojson'
@@ -37,16 +36,11 @@ function MapContext(props) {
     }
 
     useEffect(() => {
-        console.log(showBikePedOnly)
-    }, [showBikePedOnly])
-
-    useEffect(() => {
         fetch(death_data)
             .then(response => {
                 return response.json();
             })
             .then(data => setFatalData(data));
-        console.log(fatalData)
     }, [])
 
     useEffect(() => {
