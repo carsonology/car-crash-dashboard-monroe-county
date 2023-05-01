@@ -18,6 +18,7 @@ function MapContext(props) {
         showDeaths,
         showInjuries,
         showMinorCrashes,
+        showBikePedOnly,
         years
     } = props
 
@@ -34,6 +35,10 @@ function MapContext(props) {
             setMenuOpen(false)
         }
     }
+
+    useEffect(() => {
+        console.log(showBikePedOnly)
+    }, [showBikePedOnly])
 
     useEffect(() => {
         fetch(death_data)
@@ -75,6 +80,7 @@ function MapContext(props) {
                     showDeaths={showDeaths}
                     showInjuries={showInjuries}
                     showMinorCrashes={showMinorCrashes}
+                    showBikePedOnly={showBikePedOnly}
                     years={years}
                 />
             )

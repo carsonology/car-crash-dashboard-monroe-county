@@ -17,6 +17,7 @@ function Map(props) {
         showDeaths,
         showInjuries,
         showMinorCrashes,
+        showBikePedOnly,
         years
     } = props
 
@@ -292,8 +293,6 @@ function Map(props) {
                     coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
                 }
 
-                console.log(pedestrians)
-
                 // create popup contents based on the data extracted above
                 let popupHTML = `
                             <div class="tooltip">
@@ -343,11 +342,7 @@ function Map(props) {
                 'points-injuries',
                 'points-other']
             pointLayers.map((id) => {
-                map.on('mouseenter', id, (e) => {
-                    // console.log(e.features[0].properties.r)
-                    console.log('adding popup')
-                    popupFunction(e, id)
-                })
+                map.on('mouseenter', id, (e) => { popupFunction(e, id) })
                 map.on('mouseleave', id, popupRemove)
             })
 
@@ -376,27 +371,30 @@ function Map(props) {
 
     }, [speedVisibility, map])
 
-    useEffect(() => { // filter years
-        if (map) {
-            let yearFilter = []
-            // iterate through the `years` state var, which is controlled by the years slider in the Controls menu
-            // for each year, add a filtering string that can be added to the map layer
-            years.forEach((year) => {
-                yearFilter.push(['in', year.toString(), ['get', 'dt']])
-            })
+    useEffect(() => {
+        // apply year & bike/ped filters to all point layers
+        const pointLayers = ['points-death',
+            'points-injuries',
+            'points-other']
 
-            // apply year filter to all point layers
-            const pointLayers = ['points-death',
-                'points-injuries',
-                'points-other']
-            if (yearFilter.length > 0) {
-                // apply popup function to all points layers
+        let yearFilter = []
+        // iterate through the `years` state var, which is controlled by the years slider in the Controls menu
+        // for each year, add a filtering string that can be added to the map layer
+        years.forEach((year) => {
+            yearFilter.push(['in', year.toString(), ['get', 'dt']])
+        })
+        if (map) {
+            if (showBikePedOnly) {
+                pointLayers.map((id) => map.setFilter(id, ['all',
+                    ['any', ...yearFilter],
+                    ['any', ['get', 'p'], ['get', 'c']]
+                ]))
+            }
+            else {
                 pointLayers.map((id) => map.setFilter(id, ['any', ...yearFilter]))
-            } else {
-                pointLayers.map((id) => map.setFilter(id, null))
             }
         }
-    }, [years, map])
+    }, [showBikePedOnly, years, map])
 
     useEffect(() => { // hide/show fatal crash points
         if (map) {

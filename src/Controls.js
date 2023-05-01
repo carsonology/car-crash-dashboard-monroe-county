@@ -18,6 +18,8 @@ function Controls(props) {
         setShowInjuries,
         showMinorCrashes,
         setShowMinorCrashes,
+        showBikePedOnly,
+        setShowBikePedOnly,
         years,
         setYears
     } = props
@@ -148,8 +150,8 @@ function Controls(props) {
                         <ControlButton
                             type="toggle"
                             textOn=""
-                        // flag={d.flag}
-                        // setFlag={d.setFlag}
+                            flag={showBikePedOnly}
+                            setFlag={setShowBikePedOnly}
                         />
                     </div>
 
