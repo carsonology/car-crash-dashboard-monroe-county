@@ -144,7 +144,7 @@ function Controls(props) {
                     }}>
                         <div style={{ display: "flex", jusitfyContent: 'center', alignItems: 'center', marginBottom: '10px' }}>
                             <label>
-                                <span>Only show crashes involving pedestrians or cyclists</span>
+                                <span>Only show crashes involving <strong>pedestrians</strong> or <strong>cyclists</strong></span>
                             </label>
                         </div>
                         <ControlButton
