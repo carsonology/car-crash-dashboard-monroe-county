@@ -30,14 +30,15 @@ function Map(props) {
     const pointColorDeath = "red" // fatal crash color
     const pointColorInjury = "orange" // injury-only crash color
     const borderColor = "rgb(53, 53, 53)" // heatmap border color
-    const bounds = [ // prevent panning too far from Bloomington
-        [-86.87628, 38.86386], // Southwest coordinates
-        [-86.18347, 39.48197] // Northeast coordinates
-    ]
-    // colormap for speed limit lines
-    const speedCmap = ["#d7191c", "#fdae61", "#ffffbf", "#a6d96a", "#1a9641"]
+    // const bounds = [ // prevent panning too far from Bloomington
+    //     [-86.87628, 38.86386], // Southwest coordinates
+    //     [-86.18347, 39.48197] // Northeast coordinates
+    // ]
 
     useEffect(() => {
+
+        // colormap for speed limit lines
+        const speedCmap = ["#d7191c", "#fdae61", "#ffffbf", "#a6d96a", "#1a9641"]
 
         // fix for making mapbox work with react app
         // uncomment for deployment:
@@ -54,8 +55,12 @@ function Map(props) {
                 style: 'mapbox://styles/cterbush/clfyfv364003s01o4xuofdpp3',
                 center: [-86.52702437238956, 39.1656613635316], // center it over Bloomington
                 zoom: 12.5, // default zoom
+                maxzoom: 22,
                 worldCopyJump: true, // fix for react
-                maxBounds: bounds // prevent panning/zooming too far away from Bloomington
+                maxBounds: [ // prevent panning too far from Bloomington
+                    [-86.87628, 38.86386], // Southwest coordinates
+                    [-86.18347, 39.48197] // Northeast coordinates
+                ]
             }).addControl( // add geocoder to enable search
                 new MapboxGeocoder({
                     accessToken: mapboxgl.accessToken,
@@ -75,8 +80,6 @@ function Map(props) {
                 // map.addSource('crash-data-source', {
                 //     // 'type': 'vector',
                 //     // url: 'mapbox://cterbush.asrfcark',
-                //     'type': 'geojson',
-                //     'data': jitteredData
                 // })
                 map.addSource('injury-crash-source', {
                     'type': 'geojson',
@@ -182,7 +185,7 @@ function Map(props) {
                     12, 1.5,
                     14, 3,
                     // at zoom level 20 => 20 px
-                    20, 20
+                    20, 10
                 ]
 
                 map.addLayer({ // crashes with no injuries or deaths
@@ -236,7 +239,7 @@ function Map(props) {
                             12, 3,
                             14, 6,
                             // at zoom level 20 => 20 px
-                            20, 40
+                            20, 20
                         ],
                         // no stroke
                         'circle-stroke-width': 0,
@@ -252,7 +255,11 @@ function Map(props) {
         // if the map hasn't rendered yet, render it
         if (!map) initializeMap({ setMap, mapContainer });
 
-    }, [bounds, map, speedCmap]);
+    }, [map, fatalData, otherData, injuryData]);
+
+    useEffect(() => {
+        console.log('map', map)
+    }, [map])
 
 
     /*
@@ -325,8 +332,6 @@ function Map(props) {
                             </div>
                             `
 
-                // cyclists.charAt(0).toUpperCase() + cyclists.slice(1)
-
                 // Populate the popup and set its coordinates
                 // based on the feature found.
                 popup.setLngLat(coordinates).setHTML(popupHTML).addTo(map);
@@ -341,7 +346,7 @@ function Map(props) {
             const pointLayers = ['points-death',
                 'points-injuries',
                 'points-other']
-            pointLayers.map((id) => {
+            pointLayers.forEach((id) => {
                 map.on('mouseenter', id, (e) => { popupFunction(e, id) })
                 map.on('mouseleave', id, popupRemove)
             })
@@ -415,7 +420,7 @@ function Map(props) {
     }, [showInjuries, map])
 
     return (
-        <div ref={mapContainer} className="mapContainer" />
+        <div ref={mapContainer} className="mapContainerDiv" />
     )
 }
 
