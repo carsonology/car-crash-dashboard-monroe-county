@@ -5,6 +5,8 @@ import Controls from './Controls.js'
 
 function App() {
 
+  // small change
+
   // state variables to control map layers across whole app
   const [speedVisibility, setSpeedVisibility] = useState(true) // show/hide speed limits
   const [showDeaths, setShowDeaths] = useState(true) // show/hide fatal crashes
