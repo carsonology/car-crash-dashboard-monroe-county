@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import Splash from './Splash.js'
 import mapboxgl from 'mapbox-gl';
 import "mapbox-gl/dist/mapbox-gl.css";
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
@@ -12,7 +13,6 @@ function Map(props) {
         fatalData,
         injuryData,
         otherData,
-        // hexVisibility,
         speedVisibility,
         showDeaths,
         showInjuries,
@@ -359,7 +359,11 @@ function Map(props) {
     }, [showInjuries, map])
 
     return (
-        <div ref={mapContainer} className="mapContainerDiv" />
+        <>
+            <div ref={mapContainer} className="mapContainerDiv" />
+            {!map && <Splash />}
+            {/* <Splash /> */}
+        </>
     )
 }
 
