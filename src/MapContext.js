@@ -12,7 +12,6 @@ function MapContext(props) {
     const {
         menuOpen,
         setMenuOpen,
-        hexVisibility,
         speedVisibility,
         showDeaths,
         showInjuries,
@@ -29,7 +28,6 @@ function MapContext(props) {
     const detectMobile = useMobileDetect()
     // if the user clicks outside of the menu on mobile, turn off the menu
     const menuOff = () => {
-        console.log('clicking')
         if (detectMobile.isMobile() && menuOpen) {
             setMenuOpen(false)
         }
@@ -69,7 +67,6 @@ function MapContext(props) {
                     fatalData={fatalData}
                     injuryData={injuryData}
                     otherData={otherData}
-                    hexVisibility={hexVisibility}
                     speedVisibility={speedVisibility}
                     showDeaths={showDeaths}
                     showInjuries={showInjuries}

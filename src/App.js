@@ -6,7 +6,6 @@ import Controls from './Controls.js'
 function App() {
 
   // state variables to control map layers across whole app
-  const [hexVisibility, setHexVisibility] = useState(false) // show/hide heatmapj
   const [speedVisibility, setSpeedVisibility] = useState(true) // show/hide speed limits
   const [showDeaths, setShowDeaths] = useState(true) // show/hide fatal crashes
   const [showInjuries, setShowInjuries] = useState(true) // show/hide crashes w injuries
@@ -32,8 +31,6 @@ function App() {
       <Controls
         menuOpen={menuOpen}
         setMenuOpen={setMenuOpen}
-        hexVisibility={hexVisibility}
-        setHexVisibility={setHexVisibility}
         speedVisibility={speedVisibility}
         setSpeedVisibility={setSpeedVisibility}
         showDeaths={showDeaths}
@@ -51,7 +48,6 @@ function App() {
       <MapContext
         menuOpen={menuOpen}
         setMenuOpen={setMenuOpen}
-        hexVisibility={hexVisibility}
         speedVisibility={speedVisibility}
         showDeaths={showDeaths}
         showInjuries={showInjuries}

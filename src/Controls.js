@@ -8,8 +8,6 @@ function Controls(props) {
     const {
         menuOpen,
         setMenuOpen,
-        hexVisibility,
-        setHexVisibility,
         speedVisibility,
         setSpeedVisibility,
         showDeaths,
@@ -31,8 +29,6 @@ function Controls(props) {
 
     const speedCmap = ["#d7191c", "#fdae61", "#ffffbf", "#a6d96a", "#1a9641"]
     const speedStops = ['55+', '40-45', '30-35', '20-25', '15 or less']
-
-    const hexOpacities = [.1, .3, .5, .7]
 
     const pointData = [
         {
@@ -183,66 +179,8 @@ function Controls(props) {
                         )
                     })}
 
-                    <hr />
-
-                    <ControlButton
-                        type="toggle"
-                        textOn="Heatmap"
-                        flag={hexVisibility}
-                        setFlag={setHexVisibility}
-                    />
-
-                    {hexVisibility && (
-                        <>
-                            <span className="small-label">Number of crashes contained in each hexagon (total from 2003-2022)</span>
-                            <div style={{
-                                display: 'flex',
-                                width: '100%',
-                                flexFlow: 'row wrap',
-                                position: 'relative',
-                                marginTop: 8,
-                                marginBottom: 25
-                            }}>
-                                {hexOpacities.map((o, i) => {
-                                    return (
-                                        <div key={i} style={{
-                                            height: 20,
-                                            background: 'rgb(119, 216, 240)',
-                                            opacity: o,
-                                            flex: 1
-                                        }} />
-                                    )
-                                })}
-                                <div>
-                                    <p style={{
-                                        position: 'absolute',
-                                        top: 15,
-                                        left: '21%',
-                                        color: 'white',
-                                        textAlign: 'center'
-                                    }}>100</p>
-                                    <p style={{
-                                        position: 'absolute',
-                                        top: 15,
-                                        left: '46%',
-                                        color: 'white',
-                                        textAlign: 'center'
-                                    }}>500</p>
-                                    <p style={{
-                                        position: 'absolute',
-                                        top: 15,
-                                        left: '68%',
-                                        color: 'white',
-                                        textAlign: 'center'
-                                    }}>1,000</p>
-
-                                </div>
-                            </div>
-                        </>
-                    )}
                 </div>
                 <p><strong>Source:</strong> <a href="#">IDS analysis</a> of <a href="https://data.bloomington.in.gov/dataset/traffic-data">Bloomington traffic data</a></p>
-                {/* <p><strong>Source:</strong> IDS analysis of <a href="https://data.bloomington.in.gov/dataset/traffic-data">Bloomington traffic data</a></p> */}
             </div>
         </div >
     )

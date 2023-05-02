@@ -12,7 +12,7 @@ function Map(props) {
         fatalData,
         injuryData,
         otherData,
-        hexVisibility,
+        // hexVisibility,
         speedVisibility,
         showDeaths,
         showInjuries,
@@ -25,15 +25,9 @@ function Map(props) {
     const [map, setMap] = useState(null);
     const mapContainer = useRef(null);
 
-    const hexColor = "rgb(119, 216, 240)" // base color for heatmap
     const pointColor = "yellow" // non-fatal crash color
     const pointColorDeath = "red" // fatal crash color
     const pointColorInjury = "orange" // injury-only crash color
-    const borderColor = "rgb(53, 53, 53)" // heatmap border color
-    // const bounds = [ // prevent panning too far from Bloomington
-    //     [-86.87628, 38.86386], // Southwest coordinates
-    //     [-86.18347, 39.48197] // Northeast coordinates
-    // ]
 
     useEffect(() => {
 
@@ -67,7 +61,9 @@ function Map(props) {
                     mapboxgl: mapboxgl,
                     collapsed: true
                 })
-            )
+            ).addControl(new mapboxgl.NavigationControl({ // Add zoom and rotation controls to the map.
+                showCompass: false
+            }), 'bottom-right')
 
             map.on("load", () => {
                 setMap(map)
@@ -94,11 +90,6 @@ function Map(props) {
                     'type': 'geojson',
                     'data': fatalData
                 })
-                // hexbins geojson tileset
-                map.addSource('hexbin-data-small', {
-                    'type': 'vector',
-                    url: 'mapbox://cterbush.3c2zgy5z',
-                })
                 // speed limits
                 map.addSource('speed-limits', {
                     'type': 'vector',
@@ -110,39 +101,6 @@ function Map(props) {
                 /*
                     ADD LAYERS + STYLING
                 */
-                map.addLayer({ // heatmap
-                    id: 'hex-small',
-                    type: 'fill',
-                    source: 'hexbin-data-small',
-                    'source-layer': 'hexagon-data-small-21dqvs',
-                    'layout': {
-                        'visibility': 'none' // hide on first render
-                    },
-                    'paint': {
-                        'fill-color': hexColor,
-                        'fill-opacity': [
-                            'step',
-                            ['get', 'n'], // 'n' property == number of crashes in each hexagon
-                            .1, // < 100 points => 10% opacity
-                            100, .3, // 100 - 500 points => 30% opacity
-                            500, .5, // 500-1000 points => 50% opacity
-                            1000, .7, // > 1000 points => 70% opacity
-                        ]
-                    },
-                }, labelLayer) // insert this layer below the label layer
-                    .addLayer({ // light border on each hexbin
-                        'id': 'hex-borders-small',
-                        'type': 'line',
-                        'source': 'hexbin-data-small',
-                        'source-layer': 'hexagon-data-small-21dqvs',
-                        'layout': {
-                            'visibility': 'none' // hide initially
-                        },
-                        'paint': {
-                            'line-color': borderColor,
-                            'line-width': 1
-                        }
-                    }, labelLayer) // add it below the label layer
 
                 map.addLayer({ // speed limits
                     'id': 'speed-limit-lines',
@@ -257,11 +215,6 @@ function Map(props) {
 
     }, [map, fatalData.features.length, otherData.features.length, injuryData.features.length]);
 
-    useEffect(() => {
-        console.log('map', map)
-    }, [map])
-
-
     /*
         POPUPS & HOVER EFFECTS
     */
@@ -318,11 +271,11 @@ function Map(props) {
                                     </tr>
                                     <tr>
                                         <th>Pedestrians involved</th>
-                                        <td>${pedestrians ? "True" : 'False'}</td>
+                                        <td>${pedestrians ? "Yes" : 'No'}</td>
                                     </tr>
                                     <tr>
                                         <th>Cyclists involved</th>
-                                        <td>${cyclists ? "True" : 'False'}</td>
+                                        <td>${cyclists ? "Yes" : 'No'}</td>
                                     </tr>
                                     <tr>
                                         <th>Vehicles involved</th>
@@ -351,23 +304,9 @@ function Map(props) {
                 map.on('mouseleave', id, popupRemove)
             })
 
-            // double check speed color mapping
-            // map.on('mousemove', 'speed-limit-lines', (e) => {
-            //     console.log(e.features[0].properties)
-            // })
-
         }
 
     }, [map])
-
-    useEffect(() => { // hide/show heatmap
-        if (map) { // if map is rendered
-            // set visibility property based on hex visibility state variable passed from App.js
-            map.setLayoutProperty('hex-small', 'visibility', hexVisibility ? 'visible' : 'none');
-            map.setLayoutProperty('hex-borders-small', 'visibility', hexVisibility ? 'visible' : 'none');
-        }
-
-    }, [hexVisibility, map])
 
     useEffect(() => { // hide/show speed limits
         if (map) {
