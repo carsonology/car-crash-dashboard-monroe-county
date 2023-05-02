@@ -5,8 +5,6 @@ import mapboxgl from 'mapbox-gl'
 import useMobileDetect from 'use-mobile-detect-hook'
 
 import death_data from './data/master-deaths.min.geojson'
-import injury_data from './data/master-injuries.min.geojson'
-import other_data from './data/master-nonfatal.min.geojson'
 
 function MapContext(props) {
     const {
@@ -21,8 +19,6 @@ function MapContext(props) {
     } = props
 
     const [fatalData, setFatalData] = useState({ type: 'FeatureCollection', features: [] })
-    const [injuryData, setInjuryData] = useState({ type: 'FeatureCollection', features: [] })
-    const [otherData, setOtherData] = useState({ type: 'FeatureCollection', features: [] })
 
     // check if the user is on mobile
     const detectMobile = useMobileDetect()
@@ -41,32 +37,14 @@ function MapContext(props) {
             .then(data => setFatalData(data));
     }, [])
 
-    useEffect(() => {
-        fetch(injury_data)
-            .then(response => {
-                return response.json();
-            })
-            .then(data => setInjuryData(data));
-    }, [])
-
-
-    useEffect(() => {
-        fetch(other_data)
-            .then(response => {
-                return response.json();
-            })
-            .then(data => setOtherData(data));
-    }, [])
-
-    mapboxgl.accessToken = 'pk.eyJ1IjoiY3RlcmJ1c2giLCJhIjoiY2t0dnZrYjM4MmU0aDJvbzM1dTFqbDY1NiJ9.zdZur9mZOlVhIxAoiqVwBA'
+    // ids-digital-desk mapbox account
+    mapboxgl.accessToken = 'pk.eyJ1IjoiaWRzLWRpZ2l0YWwtZGVzayIsImEiOiJjbGg1cmh3ZHowMGNnM2RyeWJqcDBvc2o0In0.OJyucOQn4HIDhap19nVXHg'
 
     return (
         <div onClick={menuOff}>
-            {fatalData && injuryData && otherData && (
+            {fatalData && (
                 <Map
                     fatalData={fatalData}
-                    injuryData={injuryData}
-                    otherData={otherData}
                     speedVisibility={speedVisibility}
                     showDeaths={showDeaths}
                     showInjuries={showInjuries}
@@ -74,8 +52,7 @@ function MapContext(props) {
                     showBikePedOnly={showBikePedOnly}
                     years={years}
                 />
-            )
-            }
+            )}
         </div>
     )
 }

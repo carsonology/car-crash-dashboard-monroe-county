@@ -11,8 +11,6 @@ mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worke
 function Map(props) {
     const {
         fatalData,
-        injuryData,
-        otherData,
         speedVisibility,
         showDeaths,
         showInjuries,
@@ -46,7 +44,8 @@ function Map(props) {
             // instantiate the map
             const map = new mapboxgl.Map({
                 container: mapContainer.current, // it will know where to put the map based on the mapContainer ref
-                style: 'mapbox://styles/cterbush/clfyfv364003s01o4xuofdpp3',
+                // style: 'mapbox://styles/cterbush/clfyfv364003s01o4xuofdpp3',
+                style: 'mapbox://styles/ids-digital-desk/clh5rs3pv01f101qj904jb8fv',
                 center: [-86.52702437238956, 39.1656613635316], // center it over Bloomington
                 zoom: 12.5, // default zoom
                 maxzoom: 22,
@@ -78,12 +77,16 @@ function Map(props) {
                 //     // url: 'mapbox://cterbush.asrfcark',
                 // })
                 map.addSource('injury-crash-source', {
-                    'type': 'geojson',
-                    'data': injuryData
+                    // 'type': 'geojson',
+                    // 'data': injuryData
+                    'type': 'vector',
+                    url: 'mapbox://ids-digital-desk.0d949gv4'
                 })
                 map.addSource('other-crash-source', {
-                    'type': 'geojson',
-                    'data': otherData
+                    // 'type': 'geojson',
+                    // 'data': otherData
+                    type: 'vector',
+                    url: 'mapbox://ids-digital-desk.drbt4bz6'
                 })
                 // fatal crashes
                 map.addSource('fatal-crash-source', {
@@ -93,7 +96,8 @@ function Map(props) {
                 // speed limits
                 map.addSource('speed-limits', {
                     'type': 'vector',
-                    url: 'mapbox://cterbush.5608sxsh'
+                    // url: 'mapbox://cterbush.5608sxsh'
+                    url: 'mapbox://ids-digital-desk.2jqddygl'
                 })
 
                 const labelLayer = 'road-label' // id of label layer, to make sure this is still above all layers rendered below
@@ -106,7 +110,7 @@ function Map(props) {
                     'id': 'speed-limit-lines',
                     'type': 'line',
                     'source': 'speed-limits',
-                    'source-layer': 'speed-limits-7bpvb8',
+                    'source-layer': 'speed-limits-7w7yya',
                     'layout': {
                         visibility: 'visible', // show initially
                     },
@@ -150,7 +154,7 @@ function Map(props) {
                     id: 'points-other',
                     type: 'circle',
                     source: 'other-crash-source',
-                    // 'source-layer': 'master_minormin',
+                    'source-layer': 'master-nonfatal-dvddiu',
                     layout: {
                         visibility: 'visible',
                     },
@@ -167,7 +171,7 @@ function Map(props) {
                     id: 'points-injuries',
                     type: 'circle',
                     source: 'injury-crash-source',
-                    // 'source-layer': 'master_injuriesmin',
+                    'source-layer': 'master-injuries-3bg8n9',
                     layout: {
                         visibility: 'visible',
                     },
@@ -211,9 +215,9 @@ function Map(props) {
         }
 
         // if the map hasn't rendered yet and we have all our data loaded, render it
-        if (!map && fatalData.features.length > 0 && otherData.features.length > 0 && injuryData.features.length > 0) initializeMap({ setMap, mapContainer });
+        if (!map && fatalData.features.length > 0) initializeMap({ setMap, mapContainer });
 
-    }, [map, fatalData.features.length, otherData.features.length, injuryData.features.length]);
+    }, [map, fatalData.features.length]);
 
     /*
         POPUPS & HOVER EFFECTS
@@ -362,7 +366,6 @@ function Map(props) {
         <>
             <div ref={mapContainer} className="mapContainerDiv" />
             {!map && <Splash />}
-            {/* <Splash /> */}
         </>
     )
 }

@@ -45,7 +45,7 @@ function Controls(props) {
         },
         {
             color: 'yellow',
-            label: 'Nonfatal crash',
+            label: 'No injuries or deaths',
             flag: showMinorCrashes,
             setFlag: setShowMinorCrashes
         }
@@ -133,6 +133,7 @@ function Controls(props) {
                     <div style={{
                         display: 'flex',
                         justifyContent: 'space-between',
+                        marginTop: '12px'
                     }}>
                         <div style={{ display: "flex", jusitfyContent: 'center', alignItems: 'center', marginBottom: '10px' }}>
                             <label>
