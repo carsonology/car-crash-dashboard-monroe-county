@@ -335,7 +335,7 @@ function Map(props) {
             if (showBikePedOnly) {
                 pointLayers.map((id) => map.setFilter(id, ['all',
                     ['any', ...yearFilter],
-                    ['any', ['get', 'p'], ['get', 'c']]
+                    ['any', ['has', 'p'], ['has', 'c']]
                 ]))
             }
             else {
